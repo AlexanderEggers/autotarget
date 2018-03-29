@@ -1,15 +1,15 @@
-package org.autointent.util
+package org.autointent.helper
 
 import com.squareup.javapoet.*
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.Modifier
+import org.autointent.util.HelperProcessor
 import javax.annotation.processing.Filer
+import javax.lang.model.element.Modifier
 
-class ContextProviderProcessorUtil {
+class ContextProviderProcessor : HelperProcessor {
 
     private val classContext = ClassName.get("android.content", "Context")
 
-    fun createContextProvider(roundEnv: RoundEnvironment, filer: Filer?) {
+    override fun process(filer: Filer) {
         val fileBuilder = TypeSpec.classBuilder("ContextProvider")
                 .addModifiers(Modifier.PUBLIC)
                 .addField(FieldSpec.builder(classContext, "context")
@@ -21,7 +21,7 @@ class ContextProviderProcessorUtil {
                         .returns(classContext)
                         .build())
                 .addMethod(MethodSpec.methodBuilder("setContext")
-                        .addModifiers(Modifier.PUBLIC)
+                        .addModifiers(Modifier.PROTECTED)
                         .addParameter(classContext, "context")
                         .addStatement("this.context = context")
                         .build())
