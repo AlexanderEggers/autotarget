@@ -7,4 +7,4 @@ import kotlin.reflect.KClass
 annotation class IntentParameter(val valueKey: String,
                                  val valueName : String = "unspecified",
                                  val valueType: KClass<*>,
-                                 val parameterType: ParameterType)
+                                 val isNonNull: Boolean = false)

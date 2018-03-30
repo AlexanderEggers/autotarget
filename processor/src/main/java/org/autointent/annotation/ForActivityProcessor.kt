@@ -1,6 +1,7 @@
 package org.autointent.annotation
 
 import com.squareup.javapoet.*
+import com.squareup.javapoet.ClassName
 import org.autointent.MainProcessor
 import org.autointent.util.AnnotationProcessor
 import org.autointent.util.ProcessorUtil
@@ -11,11 +12,19 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
+
 class ForActivityProcessor : AnnotationProcessor {
 
     private val classParameterProvider = ClassName.get("org.autointent.generated", "ParameterProvider")
-    private val classActivityIntent = ClassName.get("org.autointent.generated", "ActivityIntent")
-    private val classNavigationService = ClassName.get("org.autointent.generated", "NavigationService")
+    private val contextProviderClass: TypeName = ClassName.get("org.autointent.generated", "ContextProvider")
+    private val contextInjectorClass: TypeName = ClassName.get("org.autointent.generated", "ContextInjector")
+
+    private val classIntent = ClassName.get("android.content", "Intent")
+    private val classBundle = ClassName.get("android.os", "Bundle")
+    private val classActivity = ClassName.get("android.app", "Activity")
+    private val classContext = ClassName.get("android.content", "Context")
+    private val classNonNull = ClassName.get("android.support.annotation", "NonNull")
+    private val classNullable = ClassName.get("android.support.annotation", "Nullable")
 
     private val classList = ClassName.get("java.util", "List")
     private val classClass = ClassName.get("java.lang", "Class")
@@ -31,14 +40,17 @@ class ForActivityProcessor : AnnotationProcessor {
 
         val fileBuilder = TypeSpec.classBuilder("ActivityService")
                 .addModifiers(Modifier.PUBLIC)
-                .addField(FieldSpec.builder(classNavigationService, "navigationService")
+                .addField(FieldSpec.builder(contextProviderClass, "contextProvider")
                         .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                        .initializer("new $classNavigationService()")
+                        .initializer("$contextInjectorClass.getInstance()")
                         .build())
 
         prepareActivityPackageMap(mainProcessor, roundEnv)
+
         createMethodsForActivities(fileBuilder)
-        createInitialiseMethod(fileBuilder)
+        createPerformNavigationMethod(fileBuilder)
+        createFinishActivityMethod(fileBuilder)
+        createFinishActivityWithResult(fileBuilder)
 
         val file = fileBuilder.build()
         JavaFile.builder("org.autointent.generated", file)
@@ -60,16 +72,6 @@ class ForActivityProcessor : AnnotationProcessor {
                 }
     }
 
-    private fun createInitialiseMethod(fileBuilder: TypeSpec.Builder) {
-        fileBuilder.addMethod(MethodSpec.methodBuilder("prepareIntent")
-                .addModifiers(Modifier.PRIVATE)
-                .addParameter(classClass, "activityClass")
-                .addParameter(listOfParameterProvider, "parameterList")
-                .addStatement("return new $classActivityIntent(activityClass, parameterList)")
-                .returns(classActivityIntent)
-                .build())
-    }
-
     private fun createMethodsForActivities(fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { activityName, packageName ->
             var paramCount = 0
@@ -87,37 +89,87 @@ class ForActivityProcessor : AnnotationProcessor {
             intentParameterMap!![activityName]!!.forEach {
                 var valueName = it.getAnnotation(IntentParameter::class.java).valueName
                 val valueKey = it.getAnnotation(IntentParameter::class.java).valueKey
+                val isNonNull = it.getAnnotation(IntentParameter::class.java).isNonNull
 
-                if(valueName == "unspecified") {
+                if (valueName == "unspecified") {
                     valueName = "param$paramCount"
                     paramCount++
                 }
 
-                methodBuilderBase.addParameter(ClassName.get(ProcessorUtil.getType(it)), valueName)
+                val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getType(it)), valueName)
+                        .addAnnotation(if (isNonNull) classNonNull else classNullable)
+                        .build()
+
+                methodBuilderBase.addParameter(parameter)
                         .addStatement("parameterList.add(new $classParameterProvider(\"$valueKey\", $valueName))")
-                methodBuilderOverloadMethodNotEmpty.addParameter(ClassName.get(ProcessorUtil.getType(it)), valueName)
-                methodBuilderOverloadMethodEmpty.addParameter(ClassName.get(ProcessorUtil.getType(it)), valueName)
+                methodBuilderOverloadMethodNotEmpty.addParameter(parameter)
+                methodBuilderOverloadMethodEmpty.addParameter(parameter)
 
                 paramList.add(valueName)
             }
 
             methodBuilderBase.addParameter(Int::class.java, "requestCode")
                     .addParameter(Int::class.java, "flags")
-                    .addStatement("$classActivityIntent activityIntent = prepareIntent($activityClass.class, parameterList)")
-                    .addStatement("navigationService.performNavigation(activityIntent, requestCode, flags)")
+                    .addStatement("performNavigation($activityClass.class, parameterList, requestCode, flags)")
 
             var methodClassParams = "show$activityName("
             paramList.forEach {
                 methodClassParams += "$it, "
             }
 
-            methodBuilderOverloadMethodNotEmpty.addParameter(Int::class.java, "requestCode")
-                    .addStatement(methodClassParams + "requestCode, 0)")
+            methodBuilderOverloadMethodNotEmpty.addParameter(Int::class.java, "flags")
+                    .addStatement(methodClassParams + "0, flags)")
             methodBuilderOverloadMethodEmpty.addStatement(methodClassParams + "0, 0)")
 
             fileBuilder.addMethod(methodBuilderOverloadMethodEmpty.build())
             fileBuilder.addMethod(methodBuilderOverloadMethodNotEmpty.build())
             fileBuilder.addMethod(methodBuilderBase.build())
         }
+    }
+
+    private fun createPerformNavigationMethod(fileBuilder: TypeSpec.Builder) {
+        fileBuilder.addMethod(MethodSpec.methodBuilder("performNavigation")
+                .addModifiers(Modifier.PRIVATE)
+                .addParameter(classClass, "target")
+                .addParameter(listOfParameterProvider, "parameterList")
+                .addParameter(Int::class.java, "requestCode")
+                .addParameter(Int::class.java, "flags")
+                .addCode("$classIntent intent = new $classIntent(contextProvider.getContext(), target);\n" +
+                        "intent.addFlags(flags);\n" +
+                        "\n" +
+                        "$classBundle bundle = new $classBundle();\n" +
+                        "for (ParameterProvider parameter : parameterList) {\n" +
+                        "   parameter.addToBundle(bundle);\n" +
+                        "}\n" +
+                        "\n" +
+                        "intent.putExtras(bundle);\n\n" +
+                        "if (requestCode > 0) {\n" +
+                        "   (($classActivity) contextProvider.getContext()).startActivityForResult(intent, requestCode);\n" +
+                        "} else {\n" +
+                        "   contextProvider.getContext().startActivity(intent);\n" +
+                        "}\n")
+                .build())
+    }
+
+    private fun createFinishActivityMethod(fileBuilder: TypeSpec.Builder) {
+        fileBuilder.addMethod(MethodSpec.methodBuilder("finish")
+                .addModifiers(Modifier.PUBLIC)
+                .addCode("$classContext context = contextProvider.getContext();\n" +
+                        "if (context != null && context instanceof $classActivity) {\n" +
+                        "   (($classActivity) context).finish();\n" +
+                        "}\n")
+                .build())
+    }
+
+    private fun createFinishActivityWithResult(fileBuilder: TypeSpec.Builder) {
+        fileBuilder.addMethod(MethodSpec.methodBuilder("finishWithResult")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(Int::class.java, "resultCode")
+                .addCode("$classContext context = contextProvider.getContext();\n" +
+                        "if (context != null && context instanceof $classActivity) {\n" +
+                        "   (($classActivity) context).setResult(resultCode);\n" +
+                        "   (($classActivity) context).finish();\n" +
+                        "}\n")
+                .build())
     }
 }

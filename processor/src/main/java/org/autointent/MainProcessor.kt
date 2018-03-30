@@ -36,8 +36,6 @@ class MainProcessor : AbstractProcessor() {
             ContextProviderProcessor().process(filer!!)
             ContextInjectorProcessor().process(filer!!)
             ParameterProviderProcessor().process(filer!!)
-            ActivityIntentProcessor().process(filer!!)
-            NavigatorServiceProcessor().process(filer!!)
 
             //Annotation processor part - like for the annotation @ForActivity
             IntentParameterProcessor().process(this, roundEnv)
