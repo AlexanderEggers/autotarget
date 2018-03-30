@@ -101,18 +101,18 @@ class ForActivityProcessor : AnnotationProcessor {
                 paramList.add(valueName)
             }
 
-            methodBuilderBase.addParameter(Int::class.java, "resultCode")
+            methodBuilderBase.addParameter(Int::class.java, "requestCode")
                     .addParameter(Int::class.java, "flags")
                     .addStatement("$classActivityIntent activityIntent = prepareIntent($activityClass.class, parameterList)")
-                    .addStatement("navigationService.performNavigation(activityIntent, resultCode, flags)")
+                    .addStatement("navigationService.performNavigation(activityIntent, requestCode, flags)")
 
             var methodClassParams = "show$activityName("
             paramList.forEach {
                 methodClassParams += "$it, "
             }
 
-            methodBuilderOverloadMethodNotEmpty.addParameter(Int::class.java, "resultCode")
-                    .addStatement(methodClassParams + "resultCode, 0)")
+            methodBuilderOverloadMethodNotEmpty.addParameter(Int::class.java, "requestCode")
+                    .addStatement(methodClassParams + "requestCode, 0)")
             methodBuilderOverloadMethodEmpty.addStatement(methodClassParams + "0, 0)")
 
             fileBuilder.addMethod(methodBuilderOverloadMethodEmpty.build())

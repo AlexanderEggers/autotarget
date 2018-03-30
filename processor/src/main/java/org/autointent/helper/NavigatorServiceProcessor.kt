@@ -12,7 +12,8 @@ class NavigatorServiceProcessor : HelperProcessor {
     private val contextInjectorClass: TypeName = ClassName.get("org.autointent.generated", "ContextInjector")
 
     private val classIntent = ClassName.get("android.content", "Intent")
-    private val classBundle = ClassName.get("android.content", "Bundle")
+    private val classBundle = ClassName.get("android.os", "Bundle")
+    private val classActivity = ClassName.get("android.app", "Activity")
 
     override fun process(filer: Filer) {
         val fileBuilder = TypeSpec.classBuilder("NavigationService")
@@ -24,7 +25,7 @@ class NavigatorServiceProcessor : HelperProcessor {
                 .addMethod(MethodSpec.methodBuilder("performNavigation")
                         .addModifiers(Modifier.PUBLIC)
                         .addParameter(classActivityIntent, "target")
-                        .addParameter(Int::class.java, "resultCode")
+                        .addParameter(Int::class.java, "requestCode")
                         .addParameter(Int::class.java, "flags")
                         .addCode("$classIntent intent = new $classIntent(contextProvider.getContext(), target.getActivityClass());\n" +
                                 "intent.addFlags(flags);\n" +
@@ -36,7 +37,7 @@ class NavigatorServiceProcessor : HelperProcessor {
                                 "\n" +
                                 "intent.putExtras(bundle);\n" +
                                 "if (requestCode > 0) {\n" +
-                                "   ((Activity) contextProvider.getContext()).startActivityForResult(intent, requestCode);\n" +
+                                "   (($classActivity) contextProvider.getContext()).startActivityForResult(intent, requestCode);\n" +
                                 "} else {\n" +
                                 "   contextProvider.getContext().startActivity(intent);\n" +
                                 "}\n")
