@@ -5,8 +5,7 @@ import org.autointent.annotation.ForActivity
 import org.autointent.annotation.ForActivityProcessor
 import org.autointent.annotation.IntentParameter
 import org.autointent.annotation.IntentParameterProcessor
-import org.autointent.helper.ContextInjectorProcessor
-import org.autointent.helper.ContextProviderProcessor
+import org.autointent.helper.*
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -36,6 +35,9 @@ class MainProcessor : AbstractProcessor() {
             //Helper processor part - like for the class ContextProvider
             ContextProviderProcessor().process(filer!!)
             ContextInjectorProcessor().process(filer!!)
+            ParameterProviderProcessor().process(filer!!)
+            ActivityIntentProcessor().process(filer!!)
+            NavigatorServiceProcessor().process(filer!!)
 
             //Annotation processor part - like for the annotation @ForActivity
             IntentParameterProcessor().process(this, roundEnv)
