@@ -10,8 +10,7 @@ You can use Gradle to download this libray:
 
 ```gradle
 repositories {
-  //jcenter() Coming soon!
-  maven { url  "https://dl.bintray.com/mordag/android" }
+  jcenter()
 }
 
 dependencies {
@@ -71,7 +70,7 @@ Comments/bugs/questions/pull requests are always welcome!
 Compatibility
 -------------
 
- * **Minimum Android SDK**: AutoIntent requires a minimum API level of 16.
+ * AutoIntent requires at minimum Java 7 or Android 2.3.
  
 TODO
 -------------
