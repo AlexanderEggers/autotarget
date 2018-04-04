@@ -10,8 +10,7 @@ You can use Gradle to download this libray:
 
 ```gradle
 repositories {
-  //jcenter() Coming soon!
-  maven { url  "https://dl.bintray.com/mordag/android" }
+  jcenter()
 }
 
 dependencies {
