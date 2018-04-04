@@ -35,7 +35,7 @@ dependencies {
     implementation project(":autointent-annotation")
     //implementation 'org.autointent:autointent-annotation:0.1.0'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.squareup:javapoet:1.10.0'
 
     implementation "com.google.auto.service:auto-service:1.0-rc4"
