@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
         ...
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            ActivityService().showNextActivity("Test successful!")
+            ActivityService().showDemoActivity("Test successful!")
         }
     }
 }
