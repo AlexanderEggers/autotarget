@@ -42,7 +42,7 @@ class DemoActivity : AppCompatActivity() {
 
 2. Call your activity by another activity!
 
-Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the ActivityService. This class holds the generated methods that can be used to call the DemoActivity.
+Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To able to use the ContextInjector, you have to build the project including the library first. This will generate the ContextInjector class. To call your DemoActivity, you need to create a reference of the ActivityService. This class holds the generated methods that can be used to call the DemoActivity.
 
 ```kotlin
 
