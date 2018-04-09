@@ -13,7 +13,7 @@ import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
 
-class ForActivityProcessor : AnnotationProcessor {
+class ForActivityIntentProcessor : AnnotationProcessor {
 
     private val classParameterProvider = ClassName.get("org.autointent.generated", "ParameterProvider")
     private val contextProviderClass: TypeName = ClassName.get("org.autointent.generated", "ContextProvider")
@@ -59,7 +59,7 @@ class ForActivityProcessor : AnnotationProcessor {
     }
 
     private fun prepareActivityPackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(ForActivity::class.java)
+        roundEnv.getElementsAnnotatedWith(ForActivityIntent::class.java)
                 .forEach {
                     if (it.kind != ElementKind.CLASS) {
                         mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.")

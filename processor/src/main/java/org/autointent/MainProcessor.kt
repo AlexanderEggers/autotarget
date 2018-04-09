@@ -1,8 +1,8 @@
 package org.autointent
 
 import com.google.auto.service.AutoService
-import org.autointent.annotation.ForActivity
-import org.autointent.annotation.ForActivityProcessor
+import org.autointent.annotation.ForActivityIntent
+import org.autointent.annotation.ForActivityIntentProcessor
 import org.autointent.annotation.IntentParameter
 import org.autointent.annotation.IntentParameterProcessor
 import org.autointent.helper.*
@@ -37,9 +37,9 @@ class MainProcessor : AbstractProcessor() {
             ContextInjectorProcessor().process(filer!!)
             ParameterProviderProcessor().process(filer!!)
 
-            //Annotation processor part - like for the annotation @ForActivity
+            //Annotation processor part - like for the annotation @ForActivityIntent
             IntentParameterProcessor().process(this, roundEnv)
-            ForActivityProcessor().process(this, roundEnv)
+            ForActivityIntentProcessor().process(this, roundEnv)
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -49,7 +49,7 @@ class MainProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(ForActivity::class.java.name, IntentParameter::class.java.name)
+        return mutableSetOf(ForActivityIntent::class.java.name, IntentParameter::class.java.name)
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {
