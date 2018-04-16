@@ -86,7 +86,7 @@ class ForActivityIntentProcessor : AnnotationProcessor {
             val methodBuilderOverloadMethodEmpty = MethodSpec.methodBuilder("show$activityName")
                     .addModifiers(Modifier.PUBLIC)
 
-            intentParameterMap!![activityName]!!.forEach {
+            intentParameterMap!![activityName]?.forEach {
                 var valueName = it.getAnnotation(IntentParameter::class.java).valueName
                 val valueKey = it.getAnnotation(IntentParameter::class.java).valueKey
                 val isNonNull = it.getAnnotation(IntentParameter::class.java).isNonNull
