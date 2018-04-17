@@ -9,7 +9,7 @@ class ProcessorUtil {
 
     companion object {
 
-        fun getType(element: Element): TypeMirror? {
+        fun getValueType(element: Element): TypeMirror? {
             try {
                 element.getAnnotation(IntentParameter::class.java).valueType
             } catch (mte: MirroredTypeException) {

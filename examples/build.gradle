@@ -2,14 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
-sourceSets {
-    main {
-        java {
-            srcDir "${buildDir.absolutePath}/tmp/kapt/main/kotlinGenerated/"
-        }
-    }
-}
-
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
@@ -28,10 +20,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation project(":autointent-annotation")
     kapt project (":autointent-processor")
 
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$support_lib_version"
 }

@@ -96,7 +96,7 @@ class ForActivityIntentProcessor : AnnotationProcessor {
                     paramCount++
                 }
 
-                val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getType(it)), valueName)
+                val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getValueType(it)), valueName)
                         .addAnnotation(if (isNonNull) classNonNull else classNullable)
                         .build()
 

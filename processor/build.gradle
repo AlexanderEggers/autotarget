@@ -15,7 +15,7 @@ ext {
     siteUrl = 'https://github.com/Mordag/autointent'
     gitUrl = 'https://github.com/Mordag/autointent.git'
 
-    libraryVersion = '0.1.0'
+    libraryVersion = "$autointent_library_version"
 
     developerId = 'mordag'
     developerName = 'Alexander Eggers'
@@ -33,13 +33,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation project(":autointent-annotation")
-    //implementation 'org.autointent:autointent-annotation:0.1.0'
+    //implementation "org.autointent:autointent-annotation:$autointent_library_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.squareup:javapoet:1.10.0'
+    implementation "com.squareup:javapoet:$javapoet_version"
 
-    implementation "com.google.auto.service:auto-service:1.0-rc4"
-    kapt "com.google.auto.service:auto-service:1.0-rc4"
+    implementation "com.google.auto.service:auto-service:$auto_service_version"
+    kapt "com.google.auto.service:auto-service:$auto_service_version"
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'

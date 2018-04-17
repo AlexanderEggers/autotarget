@@ -2,7 +2,8 @@ package org.autointent.annotation
 
 import kotlin.reflect.KClass
 
-@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class IntentParameter(val valueKey: String,
                                  val valueName : String = "unspecified",
