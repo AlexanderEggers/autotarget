@@ -70,7 +70,7 @@ Comments/bugs/questions/pull requests are always welcome!
 Compatibility
 -------------
 
- * AutoIntent requires at minimum Java 7 or Android 2.3.
+ * AutoIntent requires at minimum Android 16.
  
 TODO
 -------------
