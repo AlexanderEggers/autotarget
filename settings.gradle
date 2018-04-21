@@ -1,5 +1,6 @@
-include ':examples', ':annotation', ':processor'
+include ':examples', ':annotation', ':processor', ':core'
 project(":examples").name = "autointent-examples"
 project(":annotation").name = "autointent-annotation"
 project(":processor").name = "autointent-processor"
+project(":core").name = "autointent-core"
 rootProject.name = "autointent-library"

@@ -1,8 +1,9 @@
-package org.autointent
+package org.demo.autointent
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
+import org.autointent.R
 import org.autointent.annotation.ForActivityIntent
 import org.autointent.annotation.IntentParameter
 

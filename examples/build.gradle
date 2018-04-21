@@ -7,7 +7,7 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
-        applicationId "org.autointent.examples"
+        applicationId "org.demo.autointent"
         minSdkVersion 16
         targetSdkVersion 27
     }
@@ -21,9 +21,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-
-    implementation project(":autointent-annotation")
-    kapt project (":autointent-processor")
-
     implementation "com.android.support:appcompat-v7:$support_lib_version"
+
+    implementation project(":autointent-core")
+    kapt project (":autointent-processor")
 }

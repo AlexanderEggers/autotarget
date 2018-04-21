@@ -5,7 +5,6 @@ import org.autointent.annotation.ForActivityIntent
 import org.autointent.annotation.ForActivityIntentProcessor
 import org.autointent.annotation.IntentParameter
 import org.autointent.annotation.IntentParameterProcessor
-import org.autointent.helper.*
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -32,12 +31,6 @@ class MainProcessor : AbstractProcessor() {
 
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         try {
-            //Helper processor part - like for the class ContextProvider
-            ContextProviderProcessor().process(filer!!)
-            ContextInjectorProcessor().process(filer!!)
-            ParameterProviderProcessor().process(filer!!)
-            HasFragmentFlowProcessor().process(filer!!)
-
             //Annotation processor part - like for the annotation @ForActivityIntent
             IntentParameterProcessor().process(this, roundEnv)
             ForActivityIntentProcessor().process(this, roundEnv)
