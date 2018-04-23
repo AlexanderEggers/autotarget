@@ -6,7 +6,7 @@ buildscript {
         javapoet_version = '1.10.0'
         auto_service_version = '1.0-rc4'
 
-        autotarget_library_version = '0.1.0'
+        autotarget_library_version = '0.2.0'
     }
 
     repositories {

@@ -1,10 +1,7 @@
 package org.autotarget
 
 import com.google.auto.service.AutoService
-import org.autotarget.annotation.ActivityTarget
-import org.autotarget.annotation.ForActivityIntentProcessor
-import org.autotarget.annotation.TargetParameter
-import org.autotarget.annotation.TargetParameterProcessor
+import org.autotarget.annotation.*
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -33,7 +30,7 @@ class MainProcessor : AbstractProcessor() {
         try {
             //Annotation processor part - like for the annotation @ActivityTarget
             TargetParameterProcessor().process(this, roundEnv)
-            ForActivityIntentProcessor().process(this, roundEnv)
+            ActivityTargetProcessor().process(this, roundEnv)
 
         } catch (e: IOException) {
             e.printStackTrace()

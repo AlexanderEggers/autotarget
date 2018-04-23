@@ -12,7 +12,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
-class ForActivityIntentProcessor : AnnotationProcessor {
+class ActivityTargetProcessor : AnnotationProcessor {
 
     private val classActivityTarget: TypeName = ClassName.get("org.autotarget.service", "ActivityTarget")
     private val classParameterProvider = ClassName.get("org.autotarget.service", "ParameterProvider")
