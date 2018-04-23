@@ -1,7 +1,7 @@
 package org.autointent.util
 
 import com.squareup.javapoet.ClassName
-import org.autointent.annotation.IntentParameter
+import org.autointent.annotation.TargetParameter
 import javax.lang.model.element.Element
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror
@@ -10,7 +10,7 @@ object ProcessorUtil {
 
     fun getValueType(element: Element): TypeMirror? {
         try {
-            element.getAnnotation(IntentParameter::class.java).valueType
+            element.getAnnotation(TargetParameter::class.java).type
         } catch (mte: MirroredTypeException) {
             return mte.typeMirror
         }

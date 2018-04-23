@@ -8,7 +8,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NavigationService @Inject constructor() {
+class IntentService @Inject constructor() {
 
     private val contextProvider = ContextInjector.contextProvider
 
@@ -32,8 +32,8 @@ class NavigationService @Inject constructor() {
         parameters.forEach {
             it.addToBundle(bundle)
         }
-
         intent.putExtras(bundle)
+
         if (requestCode > 0) {
             (contextProvider.getContext() as Activity).startActivityForResult(intent, requestCode)
         } else {

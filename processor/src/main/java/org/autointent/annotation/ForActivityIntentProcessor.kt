@@ -26,12 +26,12 @@ class ForActivityIntentProcessor : AnnotationProcessor {
     private val listOfParameterProvider: TypeName = ParameterizedTypeName.get(classList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
-    private var intentParameterMap: HashMap<String, ArrayList<Element>>? = null
+    private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
 
     override fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        intentParameterMap = mainProcessor.intentParameterMap
+        targetParameterMap = mainProcessor.targetParameterMap
 
-        val fileBuilder = TypeSpec.classBuilder("ActivityService")
+        val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
                 .addModifiers(Modifier.PUBLIC)
 
         prepareActivityPackageMap(mainProcessor, roundEnv)
@@ -44,7 +44,7 @@ class ForActivityIntentProcessor : AnnotationProcessor {
     }
 
     private fun prepareActivityPackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(ForActivityIntent::class.java)
+        roundEnv.getElementsAnnotatedWith(ActivityTarget::class.java)
                 .forEach {
                     if (it.kind != ElementKind.CLASS) {
                         mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.")
@@ -59,7 +59,9 @@ class ForActivityIntentProcessor : AnnotationProcessor {
 
     private fun createMethodsForActivities(fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { activityName, packageName ->
-            var paramCount = 0
+            val baseList: ArrayList<Element> = ArrayList()
+            val optionalList: ArrayList<Element> = ArrayList()
+
             val activityClass = ClassName.get(packageName, activityName)
 
             val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
@@ -67,28 +69,59 @@ class ForActivityIntentProcessor : AnnotationProcessor {
                     .addAnnotation(classNonNull)
                     .returns(classActivityTarget)
                     .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+            val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addAnnotation(classNonNull)
+                    .returns(classActivityTarget)
+                    .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
 
-            intentParameterMap!![activityName]?.forEach {
-                var valueName = it.getAnnotation(IntentParameter::class.java).valueName
-                val valueKey = it.getAnnotation(IntentParameter::class.java).valueKey
-                val isNonNull = it.getAnnotation(IntentParameter::class.java).isNonNull
+            targetParameterMap!![activityName]?.forEach {
+                val isOptional = it.getAnnotation(TargetParameter::class.java).optional
 
-                if (valueName == "unspecified") {
-                    valueName = "param$paramCount"
-                    paramCount++
+                if(isOptional) {
+                    optionalList.add(it)
+                } else {
+                    baseList.add(it)
                 }
-
-                val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getValueType(it)), valueName)
-                        .addAnnotation(if (isNonNull) classNonNull else classNullable)
-                        .build()
-
-                methodBuilderBase.addParameter(parameter)
-                        .addStatement("parameterList.add(new $classParameterProvider(\"$valueKey\", $valueName))")
             }
 
-            methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+            if(!baseList.isEmpty() || optionalList.isEmpty()) {
+                populateMethodBody(baseList, methodBuilderBase, 0)
 
-            fileBuilder.addMethod(methodBuilderBase.build())
+                methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                fileBuilder.addMethod(methodBuilderBase.build())
+            }
+
+            if(!optionalList.isEmpty()) {
+                val paramCountOptional = populateMethodBody(baseList, methodBuilderWithOptionals, 0)
+                populateMethodBody(optionalList, methodBuilderWithOptionals, paramCountOptional)
+
+                methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                fileBuilder.addMethod(methodBuilderWithOptionals.build())
+            }
         }
+    }
+
+    private fun populateMethodBody(list: ArrayList<Element>, builder: MethodSpec.Builder, initParamCount: Int): Int {
+        var paramCount = initParamCount
+
+        list.forEach {
+            var valueName = it.getAnnotation(TargetParameter::class.java).name
+            val valueKey = it.getAnnotation(TargetParameter::class.java).key
+
+            if (valueName == "unspecified") {
+                valueName = "param$paramCount"
+                paramCount++
+            }
+
+            val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getValueType(it)), valueName)
+                    .addAnnotation(classNullable)
+                    .build()
+
+            builder.addParameter(parameter)
+                    .addStatement("parameterList.add(new $classParameterProvider(\"$valueKey\", $valueName))")
+        }
+
+        return paramCount
     }
 }

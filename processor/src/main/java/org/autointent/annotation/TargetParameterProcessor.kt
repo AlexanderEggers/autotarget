@@ -4,20 +4,20 @@ import org.autointent.MainProcessor
 import org.autointent.util.AnnotationProcessor
 import javax.annotation.processing.RoundEnvironment
 
-class IntentParameterProcessor : AnnotationProcessor {
+class TargetParameterProcessor : AnnotationProcessor {
 
     override fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(IntentParameter::class.java)
+        roundEnv.getElementsAnnotatedWith(TargetParameter::class.java)
                 .forEach {
                     val className = it.simpleName.toString()
-                    var elements = mainProcessor.intentParameterMap!![className]
+                    var elements = mainProcessor.targetParameterMap!![className]
 
                     if (elements == null) {
                         elements = ArrayList()
                     }
 
                     elements.add(it)
-                    mainProcessor.intentParameterMap!![className] = elements
+                    mainProcessor.targetParameterMap!![className] = elements
                 }
     }
 }
