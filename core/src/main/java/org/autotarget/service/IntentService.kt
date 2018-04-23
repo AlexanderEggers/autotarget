@@ -1,6 +1,6 @@
-package org.autointent.service
+package org.autotarget.service
 
-import org.autointent.util.ContextInjector
+import org.autotarget.util.ContextInjector
 import android.content.Intent
 import android.app.Activity
 import android.os.Bundle

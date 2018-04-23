@@ -1,4 +1,4 @@
-AutoIntent
+AutoTarget
 =====
 [![Download](https://api.bintray.com/packages/mordag/android/autointent-processor/images/download.svg) ](https://bintray.com/mordag/android/autointent-processor/_latestVersion)
 
@@ -87,5 +87,5 @@ License
 Apache 2.0. See the [LICENSE][1] file for details.
 
 
-[1]: https://github.com/Mordag/autointent/blob/1.0/LICENSE
+[1]: https://github.com/Mordag/autotarget/blob/1.0/LICENSE
 [2]: https://github.com/Mordag

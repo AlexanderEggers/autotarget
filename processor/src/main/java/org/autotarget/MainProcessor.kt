@@ -1,10 +1,10 @@
-package org.autointent
+package org.autotarget
 
 import com.google.auto.service.AutoService
-import org.autointent.annotation.ActivityTarget
-import org.autointent.annotation.ForActivityIntentProcessor
-import org.autointent.annotation.TargetParameter
-import org.autointent.annotation.TargetParameterProcessor
+import org.autotarget.annotation.ActivityTarget
+import org.autotarget.annotation.ForActivityIntentProcessor
+import org.autotarget.annotation.TargetParameter
+import org.autotarget.annotation.TargetParameterProcessor
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion

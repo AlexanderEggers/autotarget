@@ -4,18 +4,18 @@ apply plugin: 'kotlin-kapt'
 
 ext {
     bintrayRepo = 'android'
-    bintrayName = 'autointent-processor'
+    bintrayName = 'autotarget-processor'
 
-    publishedGroupId = 'org.autointent'
-    libraryName = 'autointent-processor'
-    artifact = 'autointent-processor'
+    publishedGroupId = 'org.autotarget'
+    libraryName = 'autotarget-processor'
+    artifact = 'autotarget-processor'
 
-    libraryDescription = 'Android library to simplify Intents for your app.'
+    libraryDescription = 'Android library to simplify navigation and services for your app.'
 
-    siteUrl = 'https://github.com/Mordag/autointent'
-    gitUrl = 'https://github.com/Mordag/autointent.git'
+    siteUrl = 'https://github.com/Mordag/autotarget'
+    gitUrl = 'https://github.com/Mordag/autotarget.git'
 
-    libraryVersion = "$autointent_library_version"
+    libraryVersion = "$autotarget_library_version"
 
     developerId = 'mordag'
     developerName = 'Alexander Eggers'
@@ -32,8 +32,8 @@ ext {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation project(":autointent-annotation")
-    //implementation "org.autointent:autointent-annotation:$autointent_library_version"
+    implementation project(":autotarget-annotation")
+    //implementation "org.autotarget:autotarget-annotation:autotarget_library_version"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "com.squareup:javapoet:$javapoet_version"

@@ -1,4 +1,4 @@
-package org.autointent.util
+package org.autotarget.util
 
 import android.os.Bundle
 import android.support.annotation.Nullable

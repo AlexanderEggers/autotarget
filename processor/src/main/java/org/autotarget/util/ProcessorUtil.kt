@@ -1,7 +1,7 @@
-package org.autointent.util
+package org.autotarget.util
 
 import com.squareup.javapoet.ClassName
-import org.autointent.annotation.TargetParameter
+import org.autotarget.annotation.TargetParameter
 import javax.lang.model.element.Element
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.TypeMirror

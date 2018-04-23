@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.demo.autointent">
+    package="org.demo.autotarget">
 
     <application
         android:allowBackup="false"
@@ -11,14 +11,14 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="org.demo.autointent.MainActivity">
+        <activity android:name="org.demo.autotarget.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="org.demo.autointent.NextActivity" />
+        <activity android:name="org.demo.autotarget.NextActivity" />
     </application>
 
 </manifest>

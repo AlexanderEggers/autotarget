@@ -1,7 +1,7 @@
-package org.autointent.annotation
+package org.autotarget.annotation
 
-import org.autointent.MainProcessor
-import org.autointent.util.AnnotationProcessor
+import org.autotarget.MainProcessor
+import org.autotarget.util.AnnotationProcessor
 import javax.annotation.processing.RoundEnvironment
 
 class TargetParameterProcessor : AnnotationProcessor {

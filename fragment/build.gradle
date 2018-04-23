@@ -3,18 +3,18 @@ apply plugin: 'kotlin-android'
 
 ext {
     bintrayRepo = 'android'
-    bintrayName = 'autointent-fragment'
+    bintrayName = 'autotarget-fragment'
 
-    publishedGroupId = 'org.autointent'
+    publishedGroupId = 'org.autotarget'
     libraryName = 'hasFragmentFlow'
     artifact = 'hasFragmentFlow'
 
     libraryDescription = 'Android library to simplify Intents for your app.'
 
-    siteUrl = 'https://github.com/Mordag/autointent'
-    gitUrl = 'https://github.com/Mordag/autointent.git'
+    siteUrl = 'https://github.com/Mordag/autotarget'
+    gitUrl = 'https://github.com/Mordag/autotarget.git'
 
-    libraryVersion = "$autointent_library_version"
+    libraryVersion = "$autotarget_library_version"
 
     developerId = 'mordag'
     developerName = 'Alexander Eggers'
@@ -34,7 +34,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionName "$autointent_library_version"
+        versionName "$autotarget_library_version"
         consumerProguardFiles 'proguard-rules.pro'
     }
 

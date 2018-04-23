@@ -1,4 +1,4 @@
-package org.autointent.util
+package org.autotarget.util
 
 import android.content.Context
 

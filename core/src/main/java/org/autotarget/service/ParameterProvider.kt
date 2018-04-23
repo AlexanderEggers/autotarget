@@ -1,4 +1,4 @@
-package org.autointent.service
+package org.autotarget.service
 
 import android.os.Bundle
 import java.io.Serializable

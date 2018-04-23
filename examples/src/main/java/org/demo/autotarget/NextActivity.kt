@@ -1,12 +1,11 @@
-package org.demo.autointent
+package org.demo.autotarget
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import org.autointent.R
-import org.autointent.annotation.ActivityTarget
-import org.autointent.annotation.TargetParameter
-import org.demo.autointent.NextActivity.Companion.MY_KEY
+import org.autotarget.annotation.ActivityTarget
+import org.autotarget.annotation.TargetParameter
+import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
 @TargetParameter(key = MY_KEY, type = String::class, name = "text")

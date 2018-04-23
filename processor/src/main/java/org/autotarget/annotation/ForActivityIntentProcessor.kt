@@ -1,10 +1,10 @@
-package org.autointent.annotation
+package org.autotarget.annotation
 
 import com.squareup.javapoet.*
 import com.squareup.javapoet.ClassName
-import org.autointent.MainProcessor
-import org.autointent.util.AnnotationProcessor
-import org.autointent.util.ProcessorUtil
+import org.autotarget.MainProcessor
+import org.autotarget.util.AnnotationProcessor
+import org.autotarget.util.ProcessorUtil
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
@@ -14,8 +14,8 @@ import javax.tools.Diagnostic
 
 class ForActivityIntentProcessor : AnnotationProcessor {
 
-    private val classActivityTarget: TypeName = ClassName.get("org.autointent.service", "ActivityTarget")
-    private val classParameterProvider = ClassName.get("org.autointent.service", "ParameterProvider")
+    private val classActivityTarget: TypeName = ClassName.get("org.autotarget.service", "ActivityTarget")
+    private val classParameterProvider = ClassName.get("org.autotarget.service", "ParameterProvider")
 
     private val classNonNull = ClassName.get("android.support.annotation", "NonNull")
     private val classNullable = ClassName.get("android.support.annotation", "Nullable")
@@ -24,6 +24,7 @@ class ForActivityIntentProcessor : AnnotationProcessor {
     private val classArrayList = ClassName.get("java.util", "ArrayList")
 
     private val listOfParameterProvider: TypeName = ParameterizedTypeName.get(classList, classParameterProvider)
+    private val arrayListOfParameterProvider: TypeName = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
     private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
@@ -38,7 +39,7 @@ class ForActivityIntentProcessor : AnnotationProcessor {
         createMethodsForActivities(fileBuilder)
 
         val file = fileBuilder.build()
-        JavaFile.builder("org.autointent.generated", file)
+        JavaFile.builder("org.autotarget.generated", file)
                 .build()
                 .writeTo(mainProcessor.filer)
     }
@@ -64,17 +65,6 @@ class ForActivityIntentProcessor : AnnotationProcessor {
 
             val activityClass = ClassName.get(packageName, activityName)
 
-            val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addAnnotation(classNonNull)
-                    .returns(classActivityTarget)
-                    .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
-            val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addAnnotation(classNonNull)
-                    .returns(classActivityTarget)
-                    .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
-
             targetParameterMap!![activityName]?.forEach {
                 val isOptional = it.getAnnotation(TargetParameter::class.java).optional
 
@@ -86,13 +76,29 @@ class ForActivityIntentProcessor : AnnotationProcessor {
             }
 
             if(!baseList.isEmpty() || optionalList.isEmpty()) {
-                populateMethodBody(baseList, methodBuilderBase, 0)
+                val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addAnnotation(classNonNull)
+                        .returns(classActivityTarget)
 
-                methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                if(!baseList.isEmpty()) {
+                    methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+                    populateMethodBody(baseList, methodBuilderBase, 0)
+                    methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                } else {
+                    methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
+                }
+
                 fileBuilder.addMethod(methodBuilderBase.build())
             }
 
             if(!optionalList.isEmpty()) {
+                val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addAnnotation(classNonNull)
+                        .returns(classActivityTarget)
+                        .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+
                 val paramCountOptional = populateMethodBody(baseList, methodBuilderWithOptionals, 0)
                 populateMethodBody(optionalList, methodBuilderWithOptionals, paramCountOptional)
 

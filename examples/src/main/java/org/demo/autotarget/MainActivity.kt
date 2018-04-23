@@ -1,13 +1,12 @@
-package org.demo.autointent
+package org.demo.autotarget
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
-import org.autointent.R
-import org.autointent.annotation.ActivityTarget
-import org.autointent.generated.ActivityTargets.showNextActivity
-import org.autointent.service.IntentService
-import org.autointent.util.ContextInjector
+import org.autotarget.annotation.ActivityTarget
+import org.autotarget.generated.ActivityTargets.showNextActivity
+import org.autotarget.service.IntentService
+import org.autotarget.util.ContextInjector
 
 @ActivityTarget
 class MainActivity : AppCompatActivity() {

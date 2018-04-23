@@ -1,4 +1,4 @@
-package org.autointent.annotation
+package org.autotarget.annotation
 
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
