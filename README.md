@@ -2,7 +2,7 @@ AutoTarget
 =====
 [![Download](https://api.bintray.com/packages/mordag/android/autointent-processor/images/download.svg) ](https://bintray.com/mordag/android/autointent-processor/_latestVersion)
 
-AutoIntent is an annotation processor to generate a service which can be used to handle your app navigation and intent usage.
+AutoTarget is an annotation processor to generate a service which can be used to handle your app navigation and intent usage.
 
 Download
 --------
@@ -19,7 +19,7 @@ dependencies {
 }
 ```
 
-How do I use AutoIntent? (Step-by-step introduction for 0.1.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.1.0)
 -------------------
 
 1. Add the annotations
@@ -74,7 +74,7 @@ Compatibility
  
 TODO
 -------------
-* Annotation processor: @ForFragment, @ForBroadcast, @ForService
+* Annotation processor: @FragmentTarget and maybe also @BroadcastTarget, @ServiceTarget
 * Unit testing
 * Wiki documentation
 
@@ -87,5 +87,5 @@ License
 Apache 2.0. See the [LICENSE][1] file for details.
 
 
-[1]: https://github.com/Mordag/autotarget/blob/1.0/LICENSE
+[1]: https://github.com/Mordag/autotarget/blob/master/LICENSE
 [2]: https://github.com/Mordag
