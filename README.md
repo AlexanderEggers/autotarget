@@ -33,8 +33,8 @@ Currently the library is only supporting activity intents. If you want to access
 
 ```kotlin
 
-@ForActivity
-@IntentParameter(key = "MY_KEY", type = String::class, name = "myDemoValue")
+@ActivityTarget
+@TargetParameter(key = "MY_KEY", type = String::class, name = "myDemoValue")
 class DemoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
