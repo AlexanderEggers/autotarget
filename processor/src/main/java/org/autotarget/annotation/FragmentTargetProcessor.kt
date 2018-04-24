@@ -1,10 +1,6 @@
 package org.autotarget.annotation
 
-import com.squareup.javapoet.ClassName
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.TypeSpec
+import com.squareup.javapoet.*
 import org.autotarget.MainProcessor
 import org.autotarget.util.AnnotationProcessor
 import org.autotarget.util.ProcessorUtil.classArrayList

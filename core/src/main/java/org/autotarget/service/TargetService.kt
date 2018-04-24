@@ -1,11 +1,11 @@
 package org.autotarget.service
 
-import org.autotarget.util.ContextInjector
-import android.content.Intent
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
+import org.autotarget.util.ContextInjector
 import org.autotarget.util.HasFragmentFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -40,7 +40,7 @@ class TargetService @Inject constructor() {
         }
 
         val context = contextProvider.getContext()
-        if(target.state != -1 && context is HasFragmentFlow) {
+        if (target.state != -1 && context is HasFragmentFlow) {
             context.onShowNextFragment(target.state, addToBackStack, clearBackStack, bundle)
         } else if (context is FragmentActivity) {
             val fragment = target.fragment
@@ -49,7 +49,7 @@ class TargetService @Inject constructor() {
             val ft = context.supportFragmentManager.beginTransaction()
             ft.replace(target.containerId, fragment, target.tag)
 
-            if(clearBackStack) clearFragmentBackStack()
+            if (clearBackStack) clearFragmentBackStack()
             if (addToBackStack) ft.addToBackStack(null)
 
             ft.commit()

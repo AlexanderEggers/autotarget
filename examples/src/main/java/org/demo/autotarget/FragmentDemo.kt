@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import org.autotarget.annotation.FragmentTarget
 
 @FragmentTarget(R.id.fragment_container)
-class FragmentDemo: Fragment() {
+class FragmentDemo : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_demo, container, false)

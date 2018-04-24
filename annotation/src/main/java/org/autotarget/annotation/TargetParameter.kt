@@ -6,6 +6,6 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class TargetParameter(val key: String,
-                                 val name : String = "unspecified",
+                                 val name: String = "unspecified",
                                  val type: KClass<*>,
                                  val optional: Boolean = false)
