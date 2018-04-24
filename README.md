@@ -81,7 +81,6 @@ Compatibility
  
 TODO
 -------------
-* Annotation processor: @FragmentTarget and maybe also @BroadcastTarget, @ServiceTarget
 * Unit testing
 * Wiki documentation
 
