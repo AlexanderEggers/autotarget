@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import org.autotarget.annotation.ActivityTarget
-import org.autotarget.generated.ActivityTargets.showNextActivity
+import org.autotarget.generated.FragmentTargets
 import org.autotarget.service.TargetService
 import org.autotarget.util.ContextInjector
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.execute(showNextActivity("Test successful!"))
+            targetService.execute(FragmentTargets.showFragmentDemo())
         }
     }
 }

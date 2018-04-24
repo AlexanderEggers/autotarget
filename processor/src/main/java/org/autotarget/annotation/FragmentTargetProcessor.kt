@@ -1,7 +1,10 @@
 package org.autotarget.annotation
 
-import com.squareup.javapoet.*
 import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.ParameterizedTypeName
+import com.squareup.javapoet.TypeSpec
 import org.autotarget.MainProcessor
 import org.autotarget.util.AnnotationProcessor
 import org.autotarget.util.ProcessorUtil.classArrayList
@@ -16,20 +19,21 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
-class ActivityTargetProcessor : AnnotationProcessor {
+class FragmentTargetProcessor : AnnotationProcessor {
 
-    private val classActivityTarget = ClassName.get("org.autotarget.service", "ActivityTarget")
+    private val classFragmentTarget = ClassName.get("org.autotarget.service", "FragmentTarget")
 
     private val listOfParameterProvider = ParameterizedTypeName.get(classList(), classParameterProvider())
     private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList(), classParameterProvider())
 
-    private val activitiesWithPackage: HashMap<String, String> = HashMap()
+    private val fragmentsWithPackage: HashMap<String, String> = HashMap()
     private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
+    private var fragmentAnnotationMap: HashMap<String, Element> = HashMap()
 
     override fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         targetParameterMap = mainProcessor.targetParameterMap
 
-        val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
+        val fileBuilder = TypeSpec.classBuilder("FragmentTargets")
                 .addModifiers(Modifier.PUBLIC)
 
         preparePackageMap(mainProcessor, roundEnv)
@@ -42,26 +46,32 @@ class ActivityTargetProcessor : AnnotationProcessor {
     }
 
     private fun preparePackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(ActivityTarget::class.java).forEach {
+        roundEnv.getElementsAnnotatedWith(FragmentTarget::class.java).forEach {
             if (it.kind != ElementKind.CLASS) {
                 mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.")
                 return
             }
 
             val typeElement = it as TypeElement
-            activitiesWithPackage[typeElement.simpleName.toString()] =
+            fragmentsWithPackage[typeElement.simpleName.toString()] =
                     mainProcessor.elements!!.getPackageOf(typeElement).qualifiedName.toString()
+            fragmentAnnotationMap[typeElement.simpleName.toString()] = it
         }
     }
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
-        activitiesWithPackage.forEach { activityName, packageName ->
+        fragmentsWithPackage.forEach { fragmentName, packageName ->
             val baseList: ArrayList<Element> = ArrayList()
             val optionalList: ArrayList<Element> = ArrayList()
 
-            val activityClass = ClassName.get(packageName, activityName)
+            val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
+            val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
+            val containerId = annotationElement.getAnnotation(FragmentTarget::class.java).containerId
+            val tag = annotationElement.getAnnotation(FragmentTarget::class.java).tag
 
-            targetParameterMap!![activityName]?.forEach {
+            val fragmentClass = ClassName.get(packageName, fragmentName)
+
+            targetParameterMap!![fragmentName]?.forEach {
                 val isOptional = it.getAnnotation(TargetParameter::class.java).optional
 
                 if (isOptional) {
@@ -72,33 +82,36 @@ class ActivityTargetProcessor : AnnotationProcessor {
             }
 
             if (!baseList.isEmpty() || optionalList.isEmpty()) {
-                val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
+                val methodBuilderBase = MethodSpec.methodBuilder("show$fragmentName")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addAnnotation(classNonNull())
-                        .returns(classActivityTarget)
+                        .returns(classFragmentTarget)
 
                 if (!baseList.isEmpty()) {
                     methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new ${classArrayList()}<>()")
                     populateParamListBody(baseList, methodBuilderBase, 0)
-                    methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                    methodBuilderBase.addStatement("return new $classFragmentTarget(" +
+                            "new $fragmentClass(), $state, $containerId, \"$tag\", parameterList)")
                 } else {
-                    methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
+                    methodBuilderBase.addStatement("return new $classFragmentTarget(" +
+                            "new $fragmentClass(), $state, $containerId, \"$tag\", new $arrayListOfParameterProvider())")
                 }
 
                 fileBuilder.addMethod(methodBuilderBase.build())
             }
 
             if (!optionalList.isEmpty()) {
-                val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
+                val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$fragmentName")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addAnnotation(classNonNull())
-                        .returns(classActivityTarget)
+                        .returns(classFragmentTarget)
                         .addStatement("$listOfParameterProvider parameterList = new ${classArrayList()}<>()")
 
                 val paramCountOptional = populateParamListBody(baseList, methodBuilderWithOptionals, 0)
                 populateParamListBody(optionalList, methodBuilderWithOptionals, paramCountOptional)
 
-                methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                methodBuilderWithOptionals.addStatement("return new $classFragmentTarget(" +
+                        "new $fragmentClass(), $state, $containerId, \"$tag\", parameterList)")
                 fileBuilder.addMethod(methodBuilderWithOptionals.build())
             }
         }

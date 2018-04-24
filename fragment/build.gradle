@@ -9,7 +9,7 @@ ext {
     libraryName = 'hasFragmentFlow'
     artifact = 'hasFragmentFlow'
 
-    libraryDescription = 'Android library to simplify Intents for your app.'
+    libraryDescription = 'Android library to simplify navigation and services for your app.'
 
     siteUrl = 'https://github.com/Mordag/autotarget'
     gitUrl = 'https://github.com/Mordag/autotarget.git'

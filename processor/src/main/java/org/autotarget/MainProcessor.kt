@@ -31,7 +31,7 @@ class MainProcessor : AbstractProcessor() {
             //Annotation processor part - like for the annotation @ActivityTarget
             TargetParameterProcessor().process(this, roundEnv)
             ActivityTargetProcessor().process(this, roundEnv)
-
+            FragmentTargetProcessor().process(this, roundEnv)
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -40,7 +40,8 @@ class MainProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(ActivityTarget::class.java.name, TargetParameter::class.java.name)
+        return mutableSetOf(ActivityTarget::class.java.name, TargetParameter::class.java.name,
+                FragmentTarget::class.java.name)
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {

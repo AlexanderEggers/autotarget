@@ -56,6 +56,9 @@ dependencies {
 
     api project(":autotarget-annotation")
     //api "org.autotarget:autotarget-annotation:$autotarget_library_version"
+
+    api project(":autotarget-fragment")
+    //api "org.autotarget:hasFragmentFlow:$autotarget_library_version"
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
