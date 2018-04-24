@@ -2,7 +2,7 @@ AutoTarget
 =====
 [![Download](https://api.bintray.com/packages/mordag/android/autotarget-core/images/download.svg) ](https://bintray.com/mordag/android/autotarget-core/_latestVersion)
 
-AutoTarget is an annotation processor to generate a service which can be used to handle your app navigation and intent usage.
+AutoTarget is an annotation processor to generate a service which can be used to handle your app navigation.
 
 Download
 --------
@@ -15,21 +15,23 @@ repositories {
 
 dependencies {
   //Only for annotation classes
-  implementation 'org.autointent:autointent-annotation:0.2.0'
+  implementation 'org.autotarget:autotarget-annotation:0.3.0'
+  //Only for fragment helper class
+  implementation 'org.autotarget:autotarget-fragment:0.3.0'
   //For annotation and helper classes
-  implementation 'org.autointent:autointent-core:0.2.0'
+  implementation 'org.autotarget:autotarget-core:0.3.0'
   
-  //requires autointent-core to work
-  kapt 'org.autointent:autointent-processor:0.2.0'
+  //requires autotarget-core to work
+  kapt 'org.autotarget:autotarget-processor:0.3.0'
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.2.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.3.0)
 -------------------
 
 1. Add the annotations
 
-Currently the library is only supporting activity intents. If you want to access a certain activity by another activity you have to use the @ActivityTarget annotation. Because activities sometimes require certain bundle values to show the right information, you can use the annotation @TargetParameter. This annotation allows you to define the required bundle values for this activity. Each activity can have n TargetParameter.
+Currently the library is only supporting activities and fragments. If you want to access a certain activity by another activity you have to use the @ActivityTarget annotation. Because activities sometimes require certain bundle values to show the right information, you can use the annotation @TargetParameter. This annotation allows you to define the required bundle values for this activity. Each activity can have n TargetParameter.
 
 ```kotlin
 
@@ -42,18 +44,30 @@ class DemoActivity : AppCompatActivity() {
         ...
     }
 }
-
 ```
+
+Fragments have a similar usage except you need to define certain things within the @FragmentTarget annotation. Those values are for the fragment container, the optional TAG and a state (which is only needed if you want to implement a custom solution in how fragments are created). Each fragment, like activities, can have n TargetParameter. 
+
+```kotlin
+
+@FragmentTarget(R.id.fragment_container)
+@TargetParameter(key = "MY_KEY", type = String::class, name = "myDemoValue")
+class DemoFragment : Fragment() {
+     ...
+}
+```
+
+The library is supporting two ways which will create and display fragments. You can either implement the HasFragmentFlow interface to your activity or rely on the internal implementation. The HasFragmentFlow interface allows you to implement your own solution in how fragments will be created. Due to this implementation you will need to set the state for your fragment within the @FragmentTarget annotation.
 
 2. Call your activity by another activity!
 
-Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the IntentService (not the final name!) class. You need to use one of the navigate methods provided by this class. Each call requires a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
+Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. You need to use one of the navigate methods provided by this class. Each call requires a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
 
 ```kotlin
 
 class MainActivity : AppCompatActivity() {
 
-    private val intentService: IntentService = IntentService()
+    private val targetService: TargetService = TargetService()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +75,28 @@ class MainActivity : AppCompatActivity() {
         ...
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            intentService.navigate(ActivityTargets.showNextActivity("Test successful!"))
+            targetService.execute(ActivityTargets.showNextActivity("Test successful!"))
+        }
+    }
+}
+
+```
+
+Using fragments the implemention is quite similar. You also need to use the TargetService. To access the generated methods for your fragments, you need to use the FragmentTargets class.
+
+```kotlin
+
+class MainActivity : AppCompatActivity() {
+
+    private val targetService: TargetService = TargetService()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ContextInjector.inject(this)
+        ...
+        val button = findViewById<Button>(R.id.button)
+        button.setOnClickListener {
+            targetService.execute(FragmentsTarget.showDemoFragment("Test successful!"))
         }
     }
 }
