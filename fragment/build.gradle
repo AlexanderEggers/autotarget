@@ -6,8 +6,8 @@ ext {
     bintrayName = 'autotarget-fragment'
 
     publishedGroupId = 'org.autotarget'
-    libraryName = 'hasFragmentFlow'
-    artifact = 'hasFragmentFlow'
+    libraryName = 'autotarget-fragment'
+    artifact = 'autotarget-fragment'
 
     libraryDescription = 'Android library to simplify navigation and services for your app.'
 
