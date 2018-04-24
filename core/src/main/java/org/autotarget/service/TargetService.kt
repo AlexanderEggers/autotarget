@@ -12,15 +12,15 @@ class TargetService @Inject constructor() {
 
     private val contextProvider = ContextInjector.contextProvider
 
-    fun navigate(target: ActivityTarget) {
-        navigate(target, 0, 0)
+    fun execute(target: ActivityTarget) {
+        execute(target, 0, 0)
     }
 
-    fun navigate(target: ActivityTarget, flags: Int) {
-        navigate(target, flags, 0)
+    fun execute(target: ActivityTarget, flags: Int) {
+        execute(target, flags, 0)
     }
 
-    fun navigate(target: ActivityTarget, flags: Int, requestCode: Int) {
+    fun execute(target: ActivityTarget, flags: Int, requestCode: Int) {
         performNavigation(target.targetClass, requestCode, flags, target.parameters)
     }
 

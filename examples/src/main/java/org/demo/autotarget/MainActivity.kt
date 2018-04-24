@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.navigate(showNextActivity("Test successful!"))
+            targetService.execute(showNextActivity("Test successful!"))
         }
     }
 }
