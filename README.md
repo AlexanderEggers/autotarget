@@ -15,18 +15,18 @@ repositories {
 
 dependencies {
   //Only for annotation classes
-  implementation 'org.autotarget:autotarget-annotation:0.3.0'
+  implementation 'org.autotarget:autotarget-annotation:0.4.0'
   //Only for fragment helper class
-  implementation 'org.autotarget:autotarget-fragment:0.3.0'
+  implementation 'org.autotarget:autotarget-fragment:0.4.0'
   //For annotation and helper classes
-  implementation 'org.autotarget:autotarget-core:0.3.0'
+  implementation 'org.autotarget:autotarget-core:0.4.0'
   
   //requires autotarget-core to work
-  kapt 'org.autotarget:autotarget-processor:0.3.0'
+  kapt 'org.autotarget:autotarget-processor:0.4.0'
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.3.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.4.0)
 -------------------
 
 1. Add the annotations
@@ -46,7 +46,7 @@ class DemoActivity : AppCompatActivity() {
 }
 ```
 
-Fragments have a similar usage except you need to define certain things within the @FragmentTarget annotation. Those values are for the fragment container, the optional TAG and a state (which is only needed if you want to implement a custom solution in how fragments are created). Each fragment, like activities, can have n TargetParameter. 
+Fragments have a similar usage except you can to define certain optional values within the @FragmentTarget annotation. Those values are for the fragment container, the TAG and a state (which is only needed if you want to implement a custom solution in how fragments are created). Each fragment, like activities, can have n TargetParameter. 
 
 ```kotlin
 
@@ -59,9 +59,9 @@ class DemoFragment : Fragment() {
 
 The library is supporting two ways which will create and display fragments. You can either implement the HasFragmentFlow interface to your activity or rely on the internal implementation. The HasFragmentFlow interface allows you to implement your own solution in how fragments will be created. Due to this implementation you will need to set the state for your fragment within the @FragmentTarget annotation.
 
-2. Call your activity by another activity!
+2. Call your target!
 
-Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. You need to use one of the navigate methods provided by this class. Each call requires a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
+Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextInjector class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. **Please note: If you want to access the TargetService via Java-based source code, it is highly recommended to use the JTargetService instead. This class is optimized for the usage within Java classes.** Regardless if you are going to use the TargetService or the JTargetService you need to use one of the execute methods provided by this class. Activity based calls require a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
 
 ```kotlin
 
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
 
 ```
 
-Using fragments the implemention is quite similar. You also need to use the TargetService. To access the generated methods for your fragments, you need to use the FragmentTargets class.
+Using Fragments, the implemention is quite similar. You also need to use the TargetService or JTargetService. To access the generated methods for your Fragments, you need to use the FragmentTargets class.
 
 ```kotlin
 
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         ...
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.execute(FragmentsTarget.showDemoFragment("Test successful!"))
+            targetService.execute(FragmentsTarget.showDemoFragment())
         }
     }
 }
