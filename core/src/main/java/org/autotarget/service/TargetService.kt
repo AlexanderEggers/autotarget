@@ -41,7 +41,7 @@ open class TargetService @Inject constructor() {
             parameter.addToBundle(bundle)
         }
 
-        if(containerId == -1) {
+        if (containerId == -1) {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
                     "annotation or set a custom container id using this method.")
         }
