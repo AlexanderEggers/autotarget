@@ -18,6 +18,7 @@ class NextActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_next)
+
         val textView = findViewById<TextView>(R.id.textView)
         textView.text = intent.extras.getString(MY_KEY)
     }
