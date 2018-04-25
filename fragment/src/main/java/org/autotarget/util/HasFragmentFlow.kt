@@ -1,8 +1,8 @@
 package org.autotarget.util
 
 import android.os.Bundle
-import android.support.annotation.Nullable
 
 interface HasFragmentFlow {
-    fun onShowNextFragment(state: Int, addToBackStack: Boolean, clearBackStack: Boolean, @Nullable bundle: Bundle)
+    fun onShowNextFragment(containerId: Int, state: Int, addToBackStack: Boolean,
+                           clearBackStack: Boolean, bundle: Bundle?)
 }

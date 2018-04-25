@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name="org.demo.autotarget.NextActivity" />
+        <activity android:name=".JavaActivity" />
     </application>
 
 </manifest>
