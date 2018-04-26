@@ -4,5 +4,5 @@ import android.os.Bundle
 
 interface HasFragmentFlow {
     fun onShowNextFragment(containerId: Int, state: Int, addToBackStack: Boolean,
-                           clearBackStack: Boolean, bundle: Bundle?)
+                           clearBackStack: Boolean, bundle: Bundle?): Boolean
 }

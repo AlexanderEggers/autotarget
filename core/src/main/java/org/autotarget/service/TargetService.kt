@@ -48,20 +48,30 @@ open class TargetService @Inject constructor() {
 
         val context = contextProvider.getContext()
         if (containerId != -1 && target.state != -1 && context is HasFragmentFlow) {
-            context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
+            val check = context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
+
+            if(!check && context is FragmentActivity) {
+                showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
+            }
         } else if (containerId != -1 && context is FragmentActivity) {
-            val fragment = target.fragment
-            fragment.arguments = bundle
-
-            val ft = context.supportFragmentManager.beginTransaction()
-            ft.replace(containerId, fragment, target.tag)
-
-            if (clearBackStack) clearFragmentBackStack()
-            if (addToBackStack) ft.addToBackStack(null)
-
-            ft.commit()
-            context.supportFragmentManager.executePendingTransactions()
+            showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
         }
+    }
+
+    private fun showFragmentAsDefault(target: FragmentTarget, containerId: Int = target.containerId,
+                                      addToBackStack: Boolean, clearBackStack: Boolean,
+                                      bundle: Bundle, context: FragmentActivity) {
+        val fragment = target.fragment
+        fragment.arguments = bundle
+
+        val ft = context.supportFragmentManager.beginTransaction()
+        ft.replace(containerId, fragment, target.tag)
+
+        if (clearBackStack) clearFragmentBackStack()
+        if (addToBackStack) ft.addToBackStack(null)
+
+        ft.commit()
+        context.supportFragmentManager.executePendingTransactions()
     }
 
     fun clearFragmentBackStack() {
