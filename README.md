@@ -14,12 +14,13 @@ repositories {
 }
 
 dependencies {
+  //Bundles all artifacts for the library including some additional helper classes
+  implementation 'org.autotarget:autotarget-core:0.4.1'
+
   //Only for annotation classes
   implementation 'org.autotarget:autotarget-annotation:0.4.1'
   //Only for fragment helper class
   implementation 'org.autotarget:autotarget-fragment:0.4.1'
-  //For annotation and helper classes
-  implementation 'org.autotarget:autotarget-core:0.4.1'
   
   //requires autotarget-core to work
   kapt 'org.autotarget:autotarget-processor:0.4.1'
