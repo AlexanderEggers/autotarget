@@ -15,18 +15,18 @@ repositories {
 
 dependencies {
   //Only for annotation classes
-  implementation 'org.autotarget:autotarget-annotation:0.4.0'
+  implementation 'org.autotarget:autotarget-annotation:0.4.1'
   //Only for fragment helper class
-  implementation 'org.autotarget:autotarget-fragment:0.4.0'
+  implementation 'org.autotarget:autotarget-fragment:0.4.1'
   //For annotation and helper classes
-  implementation 'org.autotarget:autotarget-core:0.4.0'
+  implementation 'org.autotarget:autotarget-core:0.4.1'
   
   //requires autotarget-core to work
-  kapt 'org.autotarget:autotarget-processor:0.4.0'
+  kapt 'org.autotarget:autotarget-processor:0.4.1'
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.4.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.4.1)
 -------------------
 
 1. Add the annotations
@@ -57,7 +57,7 @@ class DemoFragment : Fragment() {
 }
 ```
 
-The library is supporting two ways which will create and display fragments. You can either implement the HasFragmentFlow interface to your activity or rely on the internal implementation. The HasFragmentFlow interface allows you to implement your own solution in how fragments will be created. Due to this implementation you will need to set the state for your fragment within the @FragmentTarget annotation.
+The library is supporting two ways which will create and display fragments. You can either implement the HasFragmentFlow interface to your activity or rely on the internal implementation. The HasFragmentFlow interface allows you to implement your own solution in how fragments will be created. Due to this implementation you will need to set the state for your fragment within the @FragmentTarget annotation. The method onShowNextFragment is needed to be implemented using the HasFragmentFlow interface, needs a boolean as a return value. This values tells the underlying system if your implemention can handle show Fragment operation or not. This behavior can be handy if you want to quickly debug things without the need to fully implement everything.
 
 2. Call your target!
 
