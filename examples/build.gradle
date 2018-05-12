@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "org.demo.autotarget"
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 27
     }
 
