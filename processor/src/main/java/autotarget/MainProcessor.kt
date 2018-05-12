@@ -1,7 +1,7 @@
-package org.autotarget
+package autotarget
 
+import autotarget.annotation.*
 import com.google.auto.service.AutoService
-import org.autotarget.annotation.*
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion

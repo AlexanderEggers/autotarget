@@ -1,6 +1,6 @@
-package org.autotarget.util
+package autotarget.util
 
-import org.autotarget.MainProcessor
+import autotarget.MainProcessor
 import javax.annotation.processing.RoundEnvironment
 
 interface AnnotationProcessor {

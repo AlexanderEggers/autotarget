@@ -1,4 +1,4 @@
-package org.autotarget.util
+package autotarget.util
 
 import android.content.Context
 import java.lang.ref.WeakReference

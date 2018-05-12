@@ -1,4 +1,4 @@
-package org.autotarget.service
+package autotarget.service
 
 import android.support.v4.app.Fragment
 

@@ -1,20 +1,20 @@
-package org.autotarget.util
+package autotarget.util
 
+import autotarget.annotation.TargetParameter
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ParameterSpec
-import org.autotarget.annotation.TargetParameter
 import javax.lang.model.element.Element
+import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.MirroredTypeException
-import javax.lang.model.type.TypeMirror
 
 object ProcessorUtil {
 
-    fun getValueType(element: Element): TypeMirror? {
+    private fun getValueType(element: Element): DeclaredType? {
         try {
             element.getAnnotation(TargetParameter::class.java).type
         } catch (mte: MirroredTypeException) {
-            return mte.typeMirror
+            return mte.typeMirror as DeclaredType
         }
         return null
     }
@@ -31,7 +31,7 @@ object ProcessorUtil {
                 paramCount++
             }
 
-            val parameter = ParameterSpec.builder(ClassName.get(ProcessorUtil.getValueType(it)), valueName)
+            val parameter = ParameterSpec.builder(ClassName.get(getValueType(it)), valueName)
                     .addAnnotation(classNullable())
                     .build()
 
@@ -51,7 +51,7 @@ object ProcessorUtil {
     }
 
     fun classParameterProvider(): ClassName {
-        return ClassName.get("org.autotarget.service", "ParameterProvider")
+        return ClassName.get("autotarget.service", "ParameterProvider")
     }
 
     fun classList(): ClassName {

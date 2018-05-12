@@ -6,11 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import org.autotarget.annotation.ActivityTarget;
-import org.autotarget.generated.FragmentTargets;
-import org.autotarget.service.JTargetService;
-import org.autotarget.service.TargetService;
-import org.autotarget.util.ContextInjector;
+import autotarget.annotation.ActivityTarget;
+import autotarget.generated.FragmentTargets;
+import autotarget.service.JTargetService;
+import autotarget.util.ContextInjector;
 
 @ActivityTarget
 public class JavaActivity extends AppCompatActivity {

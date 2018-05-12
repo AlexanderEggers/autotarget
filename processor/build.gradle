@@ -35,7 +35,7 @@ dependencies {
     implementation project(":autotarget-annotation")
     //implementation "org.autotarget:autotarget-annotation:$autotarget_library_version"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.squareup:javapoet:$javapoet_version"
 
     implementation "com.google.auto.service:auto-service:$auto_service_version"

@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import org.autotarget.annotation.FragmentTarget
-import org.autotarget.generated.ActivityTargets
-import org.autotarget.service.TargetService
+import autotarget.annotation.FragmentTarget
+import autotarget.generated.ActivityTargets
+import autotarget.service.TargetService
 
 @FragmentTarget(R.id.fragment_container)
 class FragmentDemo : Fragment() {

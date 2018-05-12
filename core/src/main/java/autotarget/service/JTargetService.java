@@ -1,4 +1,4 @@
-package org.autotarget.service;
+package autotarget.service;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

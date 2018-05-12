@@ -1,4 +1,4 @@
-package org.autotarget.annotation
+package autotarget.annotation
 
 import kotlin.reflect.KClass
 

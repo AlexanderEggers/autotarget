@@ -1,4 +1,4 @@
-package org.autotarget.service
+package autotarget.service
 
 import android.app.Activity
 import android.content.Intent
@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.util.Log
-import org.autotarget.util.ContextInjector
-import org.autotarget.util.HasFragmentFlow
+import autotarget.util.ContextInjector
+import autotarget.util.HasFragmentFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,7 +50,7 @@ open class TargetService @Inject constructor() {
         if (containerId != -1 && target.state != -1 && context is HasFragmentFlow) {
             val check = context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
 
-            if(!check && context is FragmentActivity) {
+            if (!check && context is FragmentActivity) {
                 showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
             }
         } else if (containerId != -1 && context is FragmentActivity) {
