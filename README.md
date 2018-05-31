@@ -15,19 +15,19 @@ repositories {
 
 dependencies {
   //Bundles all artifacts for the library including some additional helper classes
-  implementation 'org.autotarget:autotarget-core:0.4.1'
+  implementation 'org.autotarget:autotarget-core:0.5.0'
 
   //Only for annotation classes
-  implementation 'org.autotarget:autotarget-annotation:0.4.1'
+  implementation 'org.autotarget:autotarget-annotation:0.5.0'
   //Only for fragment helper class
-  implementation 'org.autotarget:autotarget-fragment:0.4.1'
+  implementation 'org.autotarget:autotarget-fragment:0.5.0'
   
   //requires autotarget-core to work
-  kapt 'org.autotarget:autotarget-processor:0.4.1'
+  kapt 'org.autotarget:autotarget-processor:0.5.0'
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.4.1)
+How do I use AutoTarget? (Step-by-step introduction for 0.5.0)
 -------------------
 
 1. Add the annotations
@@ -112,13 +112,7 @@ Comments/bugs/questions/pull requests are always welcome!
 
 Compatibility
 -------------
-
- * AutoTarget requires at minimum Android 16.
- 
-TODO
--------------
-* Unit testing
-* Wiki documentation
+ * AutoTarget requires at minimum Android 14.
 
 Author
 ------
