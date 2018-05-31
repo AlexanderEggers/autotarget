@@ -7,7 +7,7 @@ buildscript {
         auto_service_version = '1.0-rc4'
         archknife_version = '0.5.0'
 
-        autotarget_library_version = '0.5.0'
+        autotarget_library_version = '0.6.0'
     }
 
     repositories {
