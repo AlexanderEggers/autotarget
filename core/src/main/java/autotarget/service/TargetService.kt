@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.util.Log
-import autotarget.util.ContextInjector
+import archknife.context.ContextProvider
 import autotarget.util.HasFragmentFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,10 +14,10 @@ import javax.inject.Singleton
 @Singleton
 open class TargetService @Inject constructor() {
 
-    private val contextProvider = ContextInjector.contextProvider
+    private val contextProvider = ContextProvider
 
     fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
-        val intent = Intent(contextProvider.getContext(), target.targetClass)
+        val intent = Intent(contextProvider.context, target.targetClass)
         intent.addFlags(flags)
 
         val bundle = Bundle()
@@ -27,9 +27,9 @@ open class TargetService @Inject constructor() {
         intent.putExtras(bundle)
 
         if (requestCode > 0) {
-            (contextProvider.getContext() as Activity).startActivityForResult(intent, requestCode)
+            (contextProvider.context as Activity).startActivityForResult(intent, requestCode)
         } else {
-            contextProvider.getContext()?.startActivity(intent)
+            contextProvider.context?.startActivity(intent)
         }
     }
 
@@ -46,7 +46,7 @@ open class TargetService @Inject constructor() {
                     "annotation or set a custom container id using this method.")
         }
 
-        val context = contextProvider.getContext()
+        val context = contextProvider.context
         if (containerId != -1 && target.state != -1 && context is HasFragmentFlow) {
             val check = context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
 
@@ -75,28 +75,28 @@ open class TargetService @Inject constructor() {
     }
 
     fun clearFragmentBackStack() {
-        val context = contextProvider.getContext()
+        val context = contextProvider.context
         if (context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
             context.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
 
     fun onBackPressed() {
-        val context = contextProvider.getContext()
+        val context = contextProvider.context
         if (context is Activity) {
             context.onBackPressed()
         }
     }
 
     fun finish() {
-        val context = contextProvider.getContext()
+        val context = contextProvider.context
         if (context is Activity) {
             context.finish()
         }
     }
 
     fun finishWithResult(resultCode: Int) {
-        val context = contextProvider.getContext()
+        val context = contextProvider.context
         if (context is Activity) {
             context.setResult(resultCode)
             context.finish()

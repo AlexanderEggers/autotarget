@@ -53,6 +53,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$support_lib_version"
     implementation "com.google.dagger:dagger:$dagger_version"
+    api "org.archknife:archknife-context:$archknife_version"
 
     api project(":autotarget-annotation")
     //api "org.autotarget:autotarget-annotation:$autotarget_library_version"

@@ -3,10 +3,10 @@ package org.demo.autotarget
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
+import archknife.context.ContextProvider
 import autotarget.annotation.ActivityTarget
 import autotarget.generated.ActivityTargets
 import autotarget.service.TargetService
-import autotarget.util.ContextInjector
 
 @ActivityTarget
 class MainActivity : AppCompatActivity() {
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ContextInjector.inject(this)
+        ContextProvider.context = this
 
         setContentView(R.layout.activity_main)
 

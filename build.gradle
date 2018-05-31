@@ -5,6 +5,7 @@ buildscript {
         support_lib_version = '27.1.1'
         javapoet_version = '1.10.0'
         auto_service_version = '1.0-rc4'
+        archknife_version = '0.5.0'
 
         autotarget_library_version = '0.5.0'
     }

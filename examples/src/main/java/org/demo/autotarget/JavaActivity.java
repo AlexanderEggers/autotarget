@@ -6,10 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import archknife.context.ContextProvider;
 import autotarget.annotation.ActivityTarget;
 import autotarget.generated.FragmentTargets;
 import autotarget.service.JTargetService;
-import autotarget.util.ContextInjector;
 
 @ActivityTarget
 public class JavaActivity extends AppCompatActivity {
@@ -19,7 +19,7 @@ public class JavaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContextInjector.INSTANCE.inject(this);
+        ContextProvider.INSTANCE.setContext(this);
 
         setContentView(R.layout.activity_main);
 
