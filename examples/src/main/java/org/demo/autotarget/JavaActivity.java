@@ -9,12 +9,12 @@ import android.widget.Button;
 import archknife.context.ContextProvider;
 import autotarget.annotation.ActivityTarget;
 import autotarget.generated.FragmentTargets;
-import autotarget.service.JTargetService;
+import autotarget.service.TargetService;
 
 @ActivityTarget
 public class JavaActivity extends AppCompatActivity {
 
-    private JTargetService targetService = new JTargetService();
+    private TargetService targetService = new TargetService();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

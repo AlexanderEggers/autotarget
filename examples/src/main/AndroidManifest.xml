@@ -11,7 +11,7 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="org.demo.autotarget.MainActivity">
+        <activity android:name="org.demo.autotarget.KotlinActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -9,7 +9,7 @@ import autotarget.generated.ActivityTargets
 import autotarget.service.TargetService
 
 @ActivityTarget
-class MainActivity : AppCompatActivity() {
+class KotlinActivity : AppCompatActivity() {
 
     private val targetService: TargetService = TargetService()
 

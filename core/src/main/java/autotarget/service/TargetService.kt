@@ -33,6 +33,7 @@ open class TargetService @Inject constructor() {
         }
     }
 
+    @JvmOverloads
     fun execute(target: FragmentTarget, containerId: Int = target.containerId,
                 addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
 
@@ -58,6 +59,7 @@ open class TargetService @Inject constructor() {
         }
     }
 
+    @JvmOverloads
     private fun showFragmentAsDefault(target: FragmentTarget, containerId: Int = target.containerId,
                                       addToBackStack: Boolean, clearBackStack: Boolean,
                                       bundle: Bundle, context: FragmentActivity) {
