@@ -40,8 +40,8 @@ class MainProcessor : AbstractProcessor() {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(ActivityTarget::class.java.name, TargetParameter::class.java.name,
-                FragmentTarget::class.java.name)
+        return mutableSetOf(ActivityTarget::class.java.name, FragmentTarget::class.java.name,
+                TargetParameter::class.java.name)
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {

@@ -1,4 +1,4 @@
-package autotarget.util
+package autotarget
 
 import autotarget.annotation.TargetParameter
 import com.squareup.javapoet.ClassName
@@ -32,33 +32,24 @@ object ProcessorUtil {
             }
 
             val parameter = ParameterSpec.builder(ClassName.get(getValueType(it)), valueName)
-                    .addAnnotation(classNullable())
+                    .addAnnotation(classNullable)
                     .build()
 
             builder.addParameter(parameter)
-                    .addStatement("parameterList.add(new ${classParameterProvider()}(\"$valueKey\", $valueName))")
+                    .addStatement("parameterList.add(new ${classParameterProvider}(\"$valueKey\", $valueName))")
         }
 
         return paramCount
     }
 
-    fun classNullable(): ClassName {
-        return ClassName.get("android.support.annotation", "Nullable")
-    }
+    val classNullable: ClassName = ClassName.get("android.support.annotation", "Nullable")
+    val classNonNull: ClassName = ClassName.get("android.support.annotation", "NonNull")
 
-    fun classNonNull(): ClassName {
-        return ClassName.get("android.support.annotation", "NonNull")
-    }
+    val classActivityTarget: ClassName = ClassName.get("autotarget.service", "ActivityTarget")
+    val classFragmentTarget: ClassName = ClassName.get("autotarget.service", "FragmentTarget")
+    val classParameterProvider: ClassName = ClassName.get("autotarget.service", "ParameterProvider")
 
-    fun classParameterProvider(): ClassName {
-        return ClassName.get("autotarget.service", "ParameterProvider")
-    }
+    val classList: ClassName = ClassName.get("java.util", "List")
+    val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
 
-    fun classList(): ClassName {
-        return ClassName.get("java.util", "List")
-    }
-
-    fun classArrayList(): ClassName {
-        return ClassName.get("java.util", "ArrayList")
-    }
 }

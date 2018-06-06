@@ -1,31 +1,28 @@
 package autotarget.annotation
 
 import autotarget.MainProcessor
-import autotarget.util.AnnotationProcessor
-import autotarget.util.ProcessorUtil.classArrayList
-import autotarget.util.ProcessorUtil.classList
-import autotarget.util.ProcessorUtil.classNonNull
-import autotarget.util.ProcessorUtil.classParameterProvider
-import autotarget.util.ProcessorUtil.populateParamListBody
+import autotarget.ProcessorUtil.classActivityTarget
+import autotarget.ProcessorUtil.classArrayList
+import autotarget.ProcessorUtil.classList
+import autotarget.ProcessorUtil.classNonNull
+import autotarget.ProcessorUtil.classParameterProvider
+import autotarget.ProcessorUtil.populateParamListBody
 import com.squareup.javapoet.*
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
-class ActivityTargetProcessor : AnnotationProcessor {
+class ActivityTargetProcessor {
 
-    private val classActivityTarget = ClassName.get("autotarget.service", "ActivityTarget")
-
-    private val listOfParameterProvider = ParameterizedTypeName.get(classList(), classParameterProvider())
-    private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList(), classParameterProvider())
+    private val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
+    private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
     private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
 
-    override fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         targetParameterMap = mainProcessor.targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
@@ -41,10 +38,11 @@ class ActivityTargetProcessor : AnnotationProcessor {
     }
 
     private fun preparePackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        roundEnv.getElementsAnnotatedWith(ActivityTarget::class.java).forEach {
-            if (it.kind != ElementKind.CLASS) {
-                mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR, "Can be applied to class.")
-                return
+        for (it in roundEnv.getElementsAnnotatedWith(ActivityTarget::class.java)) {
+            if (!it.kind.isClass) {
+                mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR,
+                        "Can only be applied to a class. Error for object: ${it.simpleName}")
+                continue
             }
 
             val typeElement = it as TypeElement
@@ -73,11 +71,11 @@ class ActivityTargetProcessor : AnnotationProcessor {
             if (!baseList.isEmpty() || optionalList.isEmpty()) {
                 val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addAnnotation(classNonNull())
+                        .addAnnotation(classNonNull)
                         .returns(classActivityTarget)
 
                 if (!baseList.isEmpty()) {
-                    methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new ${classArrayList()}<>()")
+                    methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
                     populateParamListBody(baseList, methodBuilderBase, 0)
                     methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
                 } else {
@@ -90,9 +88,9 @@ class ActivityTargetProcessor : AnnotationProcessor {
             if (!optionalList.isEmpty()) {
                 val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addAnnotation(classNonNull())
+                        .addAnnotation(classNonNull)
                         .returns(classActivityTarget)
-                        .addStatement("$listOfParameterProvider parameterList = new ${classArrayList()}<>()")
+                        .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
 
                 val paramCountOptional = populateParamListBody(baseList, methodBuilderWithOptionals, 0)
                 populateParamListBody(optionalList, methodBuilderWithOptionals, paramCountOptional)
