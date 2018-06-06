@@ -42,7 +42,7 @@ class FragmentTargetProcessor {
         for (it in roundEnv.getElementsAnnotatedWith(FragmentTarget::class.java)) {
             if (!it.kind.isClass) {
                 mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR,
-                        "Can only be applied to a class. Error for object: ${it.simpleName}")
+                        "Can only be applied to a class. Error inside ${it.simpleName}")
                 continue
             }
 
