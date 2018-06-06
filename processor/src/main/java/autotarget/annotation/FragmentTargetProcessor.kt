@@ -41,14 +41,14 @@ class FragmentTargetProcessor {
     private fun preparePackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         for (it in roundEnv.getElementsAnnotatedWith(FragmentTarget::class.java)) {
             if (!it.kind.isClass) {
-                mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR,
-                        "Can only be applied to a class. Error inside ${it.simpleName}")
+                mainProcessor.messager.printMessage(Diagnostic.Kind.ERROR,
+                        "Can only be applied to a class. Error for ${it.simpleName}")
                 continue
             }
 
             val typeElement = it as TypeElement
             fragmentsWithPackage[typeElement.simpleName.toString()] =
-                    mainProcessor.elements!!.getPackageOf(typeElement).qualifiedName.toString()
+                    mainProcessor.elements.getPackageOf(typeElement).qualifiedName.toString()
             fragmentAnnotationMap[typeElement.simpleName.toString()] = it
         }
     }

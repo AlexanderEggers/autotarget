@@ -36,7 +36,7 @@ object ProcessorUtil {
                     .build()
 
             builder.addParameter(parameter)
-                    .addStatement("parameterList.add(new ${classParameterProvider}(\"$valueKey\", $valueName))")
+                    .addStatement("parameterList.add(new $classParameterProvider(\"$valueKey\", $valueName))")
         }
 
         return paramCount

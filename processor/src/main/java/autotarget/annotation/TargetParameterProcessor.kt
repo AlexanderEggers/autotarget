@@ -9,15 +9,15 @@ class TargetParameterProcessor {
     fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         for (it in roundEnv.getElementsAnnotatedWith(TargetParameter::class.java)) {
             if (!it.kind.isClass) {
-                mainProcessor.messager!!.printMessage(Diagnostic.Kind.ERROR,
-                        "Can only be applied to a class. Error inside ${it.simpleName}")
+                mainProcessor.messager.printMessage(Diagnostic.Kind.ERROR,
+                        "Can only be applied to a class. Error for ${it.simpleName}")
                 continue
             }
 
             val className = it.simpleName.toString()
-            val elements = mainProcessor.targetParameterMap!![className] ?: ArrayList()
+            val elements = mainProcessor.targetParameterMap[className] ?: ArrayList()
             elements.add(it)
-            mainProcessor.targetParameterMap!![className] = elements
+            mainProcessor.targetParameterMap[className] = elements
         }
     }
 }

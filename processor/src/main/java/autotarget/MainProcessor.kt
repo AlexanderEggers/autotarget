@@ -8,14 +8,15 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
+import javax.tools.Diagnostic
 
 @AutoService(Processor::class)
 class MainProcessor : AbstractProcessor() {
 
-    var filer: Filer? = null
-    var messager: Messager? = null
-    var elements: Elements? = null
-    var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
+    lateinit var filer: Filer
+    lateinit var messager: Messager
+    lateinit var elements: Elements
+    val targetParameterMap: HashMap<String, ArrayList<Element>> = HashMap()
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) {
@@ -23,7 +24,6 @@ class MainProcessor : AbstractProcessor() {
         filer = processingEnvironment.filer
         messager = processingEnvironment.messager
         elements = processingEnvironment.elementUtils
-        targetParameterMap = HashMap()
     }
 
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -33,7 +33,7 @@ class MainProcessor : AbstractProcessor() {
             ActivityTargetProcessor().process(this, roundEnv)
             FragmentTargetProcessor().process(this, roundEnv)
         } catch (e: IOException) {
-            e.printStackTrace()
+            messager.printMessage(Diagnostic.Kind.ERROR, "Something went wrong: ${e.message}")
         }
 
         return true
