@@ -12,10 +12,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class TargetService @Inject constructor() {
+class TargetService @Inject constructor() {
 
     private val contextProvider = ContextProvider
 
+    @JvmOverloads
     fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
         val intent = Intent(contextProvider.context, target.targetClass)
         intent.addFlags(flags)
@@ -26,10 +27,11 @@ open class TargetService @Inject constructor() {
         }
         intent.putExtras(bundle)
 
-        if (requestCode > 0) {
-            (contextProvider.context as Activity).startActivityForResult(intent, requestCode)
+        val context = contextProvider.context
+        if (context is Activity && requestCode > 0) {
+            context.startActivityForResult(intent, requestCode)
         } else {
-            contextProvider.context?.startActivity(intent)
+            context?.startActivity(intent)
         }
     }
 
@@ -48,18 +50,17 @@ open class TargetService @Inject constructor() {
         }
 
         val context = contextProvider.context
-        if (containerId != -1 && target.state != -1 && context is HasFragmentFlow) {
+        if (context is HasFragmentFlow && containerId != -1 && target.state != -1) {
             val check = context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
 
             if (!check && context is FragmentActivity) {
                 showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
             }
-        } else if (containerId != -1 && context is FragmentActivity) {
+        } else if (context is FragmentActivity && containerId != -1) {
             showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
         }
     }
 
-    @JvmOverloads
     private fun showFragmentAsDefault(target: FragmentTarget, containerId: Int = target.containerId,
                                       addToBackStack: Boolean, clearBackStack: Boolean,
                                       bundle: Bundle, context: FragmentActivity) {
