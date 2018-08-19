@@ -15,19 +15,19 @@ repositories {
 
 dependencies {
   //Bundles all artifacts for the library including some additional helper classes
-  implementation 'org.autotarget:autotarget-core:0.6.0'
+  implementation 'org.autotarget:autotarget-core:0.7.0'
 
   //Only for annotation classes
-  implementation 'org.autotarget:autotarget-annotation:0.6.0'
+  implementation 'org.autotarget:autotarget-annotation:0.7.0'
   //Only for fragment helper class
-  implementation 'org.autotarget:autotarget-fragment:0.6.0'
+  implementation 'org.autotarget:autotarget-fragment:0.7.0'
   
   //requires autotarget-core to work
-  kapt 'org.autotarget:autotarget-processor:0.6.0'
+  kapt 'org.autotarget:autotarget-processor:0.7.0'
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.6.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.7.0)
 -------------------
 
 1. Add the annotations
@@ -62,7 +62,7 @@ The library is supporting two ways which will create and display fragments. You 
 
 2. Call your target!
 
-Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextProvider class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. **Please note: If you want to access the TargetService via Java-based source code, it is highly recommended to use the JTargetService class instead. This class is optimized for the usage within Java classes.** Regardless if you are going to use the TargetService or the JTargetService you need to use one of the execute methods provided by this class. Activity based calls require a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
+Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextProvider class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. You need to use one of the execute methods provided by this class. Activity based calls require a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
 
 ```kotlin
 
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
 ```
 
-Using Fragments, the implemention is quite similar. You also need to use the TargetService or JTargetService. To access the generated methods for your Fragments, you need to use the FragmentTargets class.
+Using Fragments, the implemention is quite similar. You also need to use the TargetService. To access the generated methods for your Fragments, you need to use the FragmentTargets class.
 
 ```kotlin
 
