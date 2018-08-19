@@ -12,12 +12,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TargetService @Inject constructor() {
+open class TargetService @Inject constructor() {
 
     private val contextProvider = ContextProvider
 
     @JvmOverloads
-    fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
+    open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
         val intent = Intent(contextProvider.context, target.targetClass)
         intent.addFlags(flags)
 
@@ -36,7 +36,7 @@ class TargetService @Inject constructor() {
     }
 
     @JvmOverloads
-    fun execute(target: FragmentTarget, containerId: Int = target.containerId,
+    open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
                 addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
 
         val bundle = Bundle()
@@ -77,28 +77,28 @@ class TargetService @Inject constructor() {
         context.supportFragmentManager.executePendingTransactions()
     }
 
-    fun clearFragmentBackStack() {
+    open fun clearFragmentBackStack() {
         val context = contextProvider.context
         if (context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
             context.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
 
-    fun onBackPressed() {
+    open fun onBackPressed() {
         val context = contextProvider.context
         if (context is Activity) {
             context.onBackPressed()
         }
     }
 
-    fun finish() {
+    open fun finish() {
         val context = contextProvider.context
         if (context is Activity) {
             context.finish()
         }
     }
 
-    fun finishWithResult(resultCode: Int) {
+    open fun finishWithResult(resultCode: Int) {
         val context = contextProvider.context
         if (context is Activity) {
             context.setResult(resultCode)
