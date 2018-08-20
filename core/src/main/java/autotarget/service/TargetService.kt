@@ -1,5 +1,6 @@
 package autotarget.service
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -35,6 +36,7 @@ open class TargetService @Inject constructor() {
         }
     }
 
+    @SuppressLint("LogNotTimber")
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
                 addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
@@ -98,10 +100,11 @@ open class TargetService @Inject constructor() {
         }
     }
 
-    open fun finishWithResult(resultCode: Int) {
+    @JvmOverloads
+    open fun finishWithResult(resultCode: Int, data: Intent? = null) {
         val context = contextProvider.context
         if (context is Activity) {
-            context.setResult(resultCode)
+            context.setResult(resultCode, data)
             context.finish()
         }
     }
