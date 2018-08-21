@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+Version 0.7.1 *(2018-08-21)*
+----------------------------
+- **FIX:** Added data intent to TargetService.finishWithResult(...).
+
 Version 0.7.0 *(2018-08-19)*
 ----------------------------
 - **NEW:** Replaced JTargetService with JvmOverloads that will generate the
