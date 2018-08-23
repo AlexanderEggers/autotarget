@@ -14,20 +14,22 @@ repositories {
 }
 
 dependencies {
+   def autotarget_version = "0.7.1"
+
   //Bundles all artifacts for the library including some additional helper classes
-  implementation 'org.autotarget:autotarget-core:0.7.0'
+  implementation "org.autotarget:autotarget-core:0.7.1'
 
   //Only for annotation classes
-  implementation 'org.autotarget:autotarget-annotation:0.7.0'
+  implementation "org.autotarget:autotarget-annotation:$autotarget_version"
   //Only for fragment helper class
-  implementation 'org.autotarget:autotarget-fragment:0.7.0'
+  implementation "org.autotarget:autotarget-fragment:$autotarget_version"
   
   //requires autotarget-core to work
-  kapt 'org.autotarget:autotarget-processor:0.7.0'
+  kapt "org.autotarget:autotarget-processor:$autotarget_version"
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.7.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.7.1)
 -------------------
 
 1. Add the annotations
