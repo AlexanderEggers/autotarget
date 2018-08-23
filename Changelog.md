@@ -1,4 +1,4 @@
-Change Log
+Changelog
 ==========
 
 Version 0.7.1 *(2018-08-21)*
