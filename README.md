@@ -17,7 +17,7 @@ dependencies {
    def autotarget_version = "0.7.1"
 
   //Bundles all artifacts for the library including some additional helper classes
-  implementation "org.autotarget:autotarget-core:0.7.1'
+  implementation "org.autotarget:autotarget-core:$autotarget_version"
 
   //Only for annotation classes
   implementation "org.autotarget:autotarget-annotation:$autotarget_version"
