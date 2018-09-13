@@ -53,7 +53,7 @@ open class TargetService @Inject constructor() {
 
         val context = contextProvider.context
         if (context is HasFragmentFlow && containerId != -1 && target.state != -1) {
-            val check = context.onShowNextFragment(target.state, containerId, addToBackStack, clearBackStack, bundle)
+            val check = context.onShowNextFragment(containerId, target.state, addToBackStack, clearBackStack, bundle)
 
             if (!check && context is FragmentActivity) {
                 showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
