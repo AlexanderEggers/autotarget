@@ -2,6 +2,7 @@ package autotarget.annotation
 
 import kotlin.reflect.KClass
 
+@Repeatable
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
