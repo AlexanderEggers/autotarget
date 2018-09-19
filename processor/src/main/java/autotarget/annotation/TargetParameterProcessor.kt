@@ -15,9 +15,7 @@ class TargetParameterProcessor {
             }
 
             val className = it.simpleName.toString()
-            val elements = mainProcessor.targetParameterMap[className] ?: ArrayList()
-            elements.add(it)
-            mainProcessor.targetParameterMap[className] = elements
+            mainProcessor.targetParameterMap[className] = it
         }
     }
 }

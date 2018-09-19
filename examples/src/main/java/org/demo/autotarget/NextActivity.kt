@@ -5,10 +5,12 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
 import autotarget.annotation.ActivityTarget
 import autotarget.annotation.TargetParameter
+import autotarget.annotation.TargetParameterItem
 import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
-@TargetParameter(key = MY_KEY, type = String::class, name = "text")
+@TargetParameter([TargetParameterItem(key = MY_KEY, type = String::class, name = "text"),
+    TargetParameterItem(key = "test1", type = Int::class, name = "text1", optional = true)])
 class NextActivity : AppCompatActivity() {
 
     companion object {

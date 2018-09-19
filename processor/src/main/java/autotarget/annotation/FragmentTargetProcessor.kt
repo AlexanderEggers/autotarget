@@ -20,7 +20,7 @@ class FragmentTargetProcessor {
     private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val fragmentsWithPackage: HashMap<String, String> = HashMap()
-    private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
+    private var targetParameterMap: HashMap<String, Element>? = null
     private var fragmentAnnotationMap: HashMap<String, Element> = HashMap()
 
     fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
@@ -55,8 +55,8 @@ class FragmentTargetProcessor {
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
         fragmentsWithPackage.forEach { fragmentName, packageName ->
-            val baseList: ArrayList<Element> = ArrayList()
-            val optionalList: ArrayList<Element> = ArrayList()
+            val baseList: ArrayList<TargetParameterItem> = ArrayList()
+            val optionalList: ArrayList<TargetParameterItem> = ArrayList()
 
             val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
             val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
@@ -64,11 +64,8 @@ class FragmentTargetProcessor {
             val tag = annotationElement.getAnnotation(FragmentTarget::class.java).tag
 
             val fragmentClass = ClassName.get(packageName, fragmentName)
-
-            targetParameterMap!![fragmentName]?.forEach {
-                val isOptional = it.getAnnotation(TargetParameter::class.java).optional
-
-                if (isOptional) {
+            targetParameterMap?.get(fragmentName)?.getAnnotation(TargetParameter::class.java)?.value?.forEach {
+                if (it.optional) {
                     optionalList.add(it)
                 } else {
                     baseList.add(it)

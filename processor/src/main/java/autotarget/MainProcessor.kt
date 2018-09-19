@@ -15,7 +15,7 @@ class MainProcessor : AbstractProcessor() {
     lateinit var filer: Filer
     lateinit var messager: Messager
     lateinit var elements: Elements
-    val targetParameterMap: HashMap<String, ArrayList<Element>> = HashMap()
+    val targetParameterMap: HashMap<String, Element> = HashMap()
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) {

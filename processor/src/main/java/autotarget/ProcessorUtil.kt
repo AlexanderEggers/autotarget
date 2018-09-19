@@ -1,30 +1,29 @@
 package autotarget
 
-import autotarget.annotation.TargetParameter
+import autotarget.annotation.TargetParameterItem
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ParameterSpec
-import javax.lang.model.element.Element
-import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.MirroredTypeException
+import javax.lang.model.type.TypeMirror
 
 object ProcessorUtil {
 
-    private fun getValueType(element: Element): DeclaredType? {
+    private fun getValueType(element: TargetParameterItem): TypeMirror? {
         try {
-            element.getAnnotation(TargetParameter::class.java).type
+            element.type
         } catch (mte: MirroredTypeException) {
-            return mte.typeMirror as DeclaredType
+            return mte.typeMirror
         }
         return null
     }
 
-    fun populateParamListBody(list: ArrayList<Element>, builder: MethodSpec.Builder, initParamCount: Int): Int {
+    fun populateParamListBody(list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder, initParamCount: Int): Int {
         var paramCount = initParamCount
 
         list.forEach {
-            var valueName = it.getAnnotation(TargetParameter::class.java).name
-            val valueKey = it.getAnnotation(TargetParameter::class.java).key
+            var valueName = it.name
+            val valueKey = it.key
 
             if (valueName == "unspecified") {
                 valueName = "param$paramCount"
