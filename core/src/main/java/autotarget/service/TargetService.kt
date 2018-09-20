@@ -39,7 +39,7 @@ open class TargetService @Inject constructor() {
     @SuppressLint("LogNotTimber")
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
-                addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
+                     addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
 
         val bundle = Bundle()
         for (parameter in target.parameters) {
