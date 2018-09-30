@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-   def autotarget_version = "0.7.1"
+   def autotarget_version = "0.8.0"
 
   //Bundles all artifacts for the library including some additional helper classes
   implementation "org.autotarget:autotarget-core:$autotarget_version"
@@ -29,17 +29,17 @@ dependencies {
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.7.1)
+How do I use AutoTarget? (Step-by-step introduction for 0.8.0)
 -------------------
 
 1. Add the annotations
 
-Currently the library is only supporting activities and fragments. If you want to access a certain activity by another activity you have to use the @ActivityTarget annotation. Because activities sometimes require certain bundle values to show the right information, you can use the annotation @TargetParameter. This annotation allows you to define the required bundle values for this activity. Each activity can have n TargetParameter.
+Currently the library is only supporting activities and fragments. If you want to access a certain activity by another activity you have to use the @ActivityTarget annotation. Because activities sometimes require certain bundle values to show the right information, you can use the annotation @TargetParameter. This annotation allows you to define the required bundle values for this activity. The annotation expects an Array and therefore you can define n TargetParameterItem.
 
 ```kotlin
 
 @ActivityTarget
-@TargetParameter(key = "MY_KEY", type = String::class, name = "myDemoValue")
+@TargetParameter([TargetParameterItem(key = "MY_KEY", type = String::class, name = "myDemoValue")])
 class DemoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,12 +49,12 @@ class DemoActivity : AppCompatActivity() {
 }
 ```
 
-Fragments have a similar usage except you can to define certain optional values within the @FragmentTarget annotation. Those values are for the fragment container, the TAG and a state (which is only needed if you want to implement a custom solution in how fragments are created). Each fragment, like activities, can have n TargetParameter. 
+Fragments have a similar usage except you can to define certain optional values within the @FragmentTarget annotation. Those values are for the fragment container, the TAG and a state (which is only needed if you want to implement a custom solution in how fragments are created). This annotation allows you to define the required bundle values for this fragment. The annotation expects an Array and therefore you can define n TargetParameterItem.
 
 ```kotlin
 
 @FragmentTarget(R.id.fragment_container)
-@TargetParameter(key = "MY_KEY", type = String::class, name = "myDemoValue")
+@TargetParameter([TargetParameterItem(key = "MY_KEY", type = String::class, name = "myDemoValue")])
 class DemoFragment : Fragment() {
      ...
 }
