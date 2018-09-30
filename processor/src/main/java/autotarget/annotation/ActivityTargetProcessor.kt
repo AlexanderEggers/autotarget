@@ -20,7 +20,7 @@ class ActivityTargetProcessor {
     private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
-    private var targetParameterMap: HashMap<String, ArrayList<Element>>? = null
+    private var targetParameterMap: HashMap<String, Element>? = null
 
     fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         targetParameterMap = mainProcessor.targetParameterMap
@@ -53,15 +53,12 @@ class ActivityTargetProcessor {
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { activityName, packageName ->
-            val baseList: ArrayList<Element> = ArrayList()
-            val optionalList: ArrayList<Element> = ArrayList()
+            val baseList: ArrayList<TargetParameterItem> = ArrayList()
+            val optionalList: ArrayList<TargetParameterItem> = ArrayList()
 
             val activityClass = ClassName.get(packageName, activityName)
-
-            targetParameterMap!![activityName]?.forEach {
-                val isOptional = it.getAnnotation(TargetParameter::class.java).optional
-
-                if (isOptional) {
+            targetParameterMap?.get(activityName)?.getAnnotation(TargetParameter::class.java)?.value?.forEach {
+                if (it.optional) {
                     optionalList.add(it)
                 } else {
                     baseList.add(it)
