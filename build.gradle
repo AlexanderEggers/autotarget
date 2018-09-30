@@ -1,15 +1,15 @@
 buildscript {
     ext {
-        android_studio_version = "3.1.4"
+        android_studio_version = "3.2.0"
 
-        kotlin_version = '1.2.61'
+        kotlin_version = '1.2.71'
         dagger_version = '2.17'
-        support_lib_version = '27.1.1'
+        support_lib_version = '28.0.0'
         javapoet_version = '1.11.1'
         auto_service_version = '1.0-rc4'
         archknife_version = '0.7.0'
 
-        autotarget_library_version = '0.7.2'
+        autotarget_library_version = '0.8.0'
     }
 
     repositories {
