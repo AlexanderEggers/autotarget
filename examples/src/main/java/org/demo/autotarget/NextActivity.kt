@@ -8,7 +8,7 @@ import autotarget.annotation.TargetParameter
 import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
-@TargetParameter(key = MY_KEY, type = String::class, name = "text")
+@TargetParameter(key = MY_KEY, type = String::class, name = "text", optional = true)
 class NextActivity : AppCompatActivity() {
 
     companion object {
@@ -20,6 +20,6 @@ class NextActivity : AppCompatActivity() {
         setContentView(R.layout.activity_next)
 
         val textView = findViewById<TextView>(R.id.textView)
-        textView.text = intent.extras.getString(MY_KEY)
+        textView.text = intent.extras?.getString(MY_KEY)
     }
 }

@@ -75,24 +75,22 @@ class FragmentTargetProcessor {
                 }
             }
 
-            if (!baseList.isEmpty() || optionalList.isEmpty()) {
-                val methodBuilderBase = MethodSpec.methodBuilder("show$fragmentName")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addAnnotation(classNonNull)
-                        .returns(classFragmentTarget)
+            val methodBuilderBase = MethodSpec.methodBuilder("show$fragmentName")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addAnnotation(classNonNull)
+                    .returns(classFragmentTarget)
 
-                if (!baseList.isEmpty()) {
-                    methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
-                    populateParamListBody(baseList, methodBuilderBase, 0)
-                    methodBuilderBase.addStatement("return new $classFragmentTarget(" +
-                            "new $fragmentClass(), $state, $containerId, \"$tag\", parameterList)")
-                } else {
-                    methodBuilderBase.addStatement("return new $classFragmentTarget(" +
-                            "new $fragmentClass(), $state, $containerId, \"$tag\", new $arrayListOfParameterProvider())")
-                }
-
-                fileBuilder.addMethod(methodBuilderBase.build())
+            if (!baseList.isEmpty()) {
+                methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+                populateParamListBody(baseList, methodBuilderBase, 0)
+                methodBuilderBase.addStatement("return new $classFragmentTarget(" +
+                        "new $fragmentClass(), $state, $containerId, \"$tag\", parameterList)")
+            } else {
+                methodBuilderBase.addStatement("return new $classFragmentTarget(" +
+                        "new $fragmentClass(), $state, $containerId, \"$tag\", new $arrayListOfParameterProvider())")
             }
+
+            fileBuilder.addMethod(methodBuilderBase.build())
 
             if (!optionalList.isEmpty()) {
                 val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$fragmentName")
