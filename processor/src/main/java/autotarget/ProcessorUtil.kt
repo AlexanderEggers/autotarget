@@ -24,18 +24,24 @@ object ProcessorUtil {
         list.forEach {
             var valueName = it.name
             val valueKey = it.key
+            val valueType = ClassName.get(getValueType(it))
 
             if (valueName == "unspecified") {
                 valueName = "param$paramCount"
                 paramCount++
             }
 
-            val parameter = ParameterSpec.builder(ClassName.get(getValueType(it)), valueName)
+            val parameter = ParameterSpec.builder(valueType, valueName)
                     .addAnnotation(classNullable)
                     .build()
 
             builder.addParameter(parameter)
-                    .addStatement("parameterList.add(new $classParameterProvider(\"$valueKey\", $valueName))")
+
+            when (valueType) {
+                classBundle -> builder.addStatement("parameterList.add(new $classBundleParameterProvider(\"$valueKey\", $valueName))")
+                classParcelable -> builder.addStatement("parameterList.add(new $classParcelableParameterProvider(\"$valueKey\", $valueName))")
+                else -> builder.addStatement("parameterList.add(new $classValueParameterProvider(\"$valueKey\", $valueName))")
+            }
         }
 
         return paramCount
@@ -46,9 +52,15 @@ object ProcessorUtil {
 
     val classActivityTarget: ClassName = ClassName.get("autotarget.service", "ActivityTarget")
     val classFragmentTarget: ClassName = ClassName.get("autotarget.service", "FragmentTarget")
+
     val classParameterProvider: ClassName = ClassName.get("autotarget.service", "ParameterProvider")
+    val classBundleParameterProvider: ClassName = ClassName.get("autotarget.service", "BundleParameterProvider")
+    val classParcelableParameterProvider: ClassName = ClassName.get("autotarget.service", "ParcelableParameterProvider")
+    val classValueParameterProvider: ClassName = ClassName.get("autotarget.service", "ValueParameterProvider")
+
+    val classBundle: ClassName = ClassName.get("android.os", "Bundle")
+    val classParcelable: ClassName = ClassName.get("android.os", "Parcelable")
 
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
-
 }

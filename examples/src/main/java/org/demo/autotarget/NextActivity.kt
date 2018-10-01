@@ -10,7 +10,7 @@ import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
 @TargetParameter([TargetParameterItem(key = MY_KEY, type = String::class, name = "text", optional = false),
-    TargetParameterItem(key = "test1", type = Int::class, name = "text1", optional = true)])
+    TargetParameterItem(key = "bundleKey", type = Bundle::class, name = "bundle", optional = true)])
 class NextActivity : AppCompatActivity() {
 
     companion object {
