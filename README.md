@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-   def autotarget_version = "0.9.0"
+   def autotarget_version = "0.10.0"
 
   //Bundles all artifacts for the library including some additional helper classes
   implementation "org.autotarget:autotarget-core:$autotarget_version"
@@ -29,7 +29,7 @@ dependencies {
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.9.0)
+How do I use AutoTarget? (Step-by-step introduction for 0.10.0)
 -------------------
 
 1. Add the annotations
