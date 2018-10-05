@@ -1,9 +1,9 @@
 package autotarget.service
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
 import android.util.Log
@@ -19,14 +19,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
-        val intent = Intent(contextProvider.context, target.targetClass)
-        intent.addFlags(flags)
-
-        val bundle = Bundle()
-        target.parameters.forEach {
-            it.addToBundle(bundle)
-        }
-        intent.putExtras(bundle)
+        val intent = create(target, flags, requestCode)
 
         val context = contextProvider.context
         if (context is Activity && requestCode > 0) {
@@ -36,7 +29,6 @@ open class TargetService @Inject constructor() {
         }
     }
 
-    @SuppressLint("LogNotTimber")
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
                      addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
@@ -61,6 +53,39 @@ open class TargetService @Inject constructor() {
         } else if (context is FragmentActivity && containerId != -1) {
             showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
         }
+    }
+
+    @JvmOverloads
+    open fun create(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0): Intent {
+        val intent = Intent(contextProvider.context, target.targetClass)
+        intent.addFlags(flags)
+
+        val bundle = Bundle()
+        target.parameters.forEach {
+            it.addToBundle(bundle)
+        }
+        intent.putExtras(bundle)
+
+        return intent
+    }
+
+    @JvmOverloads
+    open fun create(target: FragmentTarget, containerId: Int = target.containerId,
+                         addToBackStack: Boolean = true, clearBackStack: Boolean = false): Fragment {
+        val bundle = Bundle()
+        for (parameter in target.parameters) {
+            parameter.addToBundle(bundle)
+        }
+
+        if (containerId == -1) {
+            Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
+                    "annotation or set a custom container id using this method.")
+        }
+
+        val fragment = target.fragment
+        fragment.arguments = bundle
+
+        return fragment
     }
 
     private fun showFragmentAsDefault(target: FragmentTarget, containerId: Int = target.containerId,
