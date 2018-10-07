@@ -1,6 +1,23 @@
 Changelog
 ==========
 
+Version 0.10.0 *(2018-10-05)*
+----------------------------
+- **NEW:** Added support for only creating the Fragment-/Activity-Target (Fragment/Intent). This can be useful for cases when actual target objects needs to be injected differently into the Android UI system, like for ViewPager using Fragments.
+
+Version 0.9.0 *(2018-10-02)*
+----------------------------
+- **NEW:** Added support for bundle and parcelable target parameter. All other values should be able to use the existing implementation that will cast everything to Serializable.
+- **NEW:** Tweaking autotarget processor and always create a non-optional method even if there are no non-optional parameter.
+- **MISC:** Updated Kotlin to version 1.2.71
+- **MISC:** Updated Android Support Library to version 28.0.0
+
+Version 0.8.0 *(2018-09-30)*
+----------------------------
+- **NEW:** Added support for multiple TargetParamter annotation.
+- **FIX:** Fixed incorrect internal onShowNextFragment usage.
+- **FIX:** Fixed ClassCastException when using primitive types.
+
 Version 0.7.1 *(2018-08-21)*
 ----------------------------
 - **BUGFIX:** Added data intent to TargetService.finishWithResult(...).
