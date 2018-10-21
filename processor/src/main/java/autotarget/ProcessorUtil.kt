@@ -5,6 +5,7 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.ParameterSpec
 import javax.lang.model.type.MirroredTypeException
+import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeMirror
 
 object ProcessorUtil {
@@ -24,18 +25,20 @@ object ProcessorUtil {
         list.forEach {
             var valueName = it.name
             val valueKey = it.key
-            val valueType = ClassName.get(getValueType(it))
+            val typeMirror = getValueType(it)
+            val valueType = ClassName.get(typeMirror)
 
             if (valueName == "unspecified") {
                 valueName = "param$paramCount"
                 paramCount++
             }
 
-            val parameter = ParameterSpec.builder(valueType, valueName)
-                    .addAnnotation(classNullable)
-                    .build()
+            val parameterBuilder = ParameterSpec.builder(valueType, valueName)
+            if(typeMirror !is PrimitiveType) {
+                parameterBuilder.addAnnotation(classNullable)
+            }
 
-            builder.addParameter(parameter)
+            builder.addParameter(parameterBuilder.build())
 
             when (valueType) {
                 classBundle -> builder.addStatement("parameterList.add(new $classBundleParameterProvider(\"$valueKey\", $valueName))")

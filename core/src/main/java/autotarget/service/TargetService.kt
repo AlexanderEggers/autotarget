@@ -99,6 +99,16 @@ open class TargetService @Inject constructor() {
         context.supportFragmentManager.executePendingTransactions()
     }
 
+    @JvmOverloads
+    open fun executeIntent(intent: Intent, requestCode: Int = -1) {
+        val context = contextProvider.context
+        if (context is Activity && requestCode > 0) {
+            context.startActivityForResult(intent, requestCode)
+        } else {
+            context?.startActivity(intent)
+        }
+    }
+
     open fun clearFragmentBackStack() {
         val context = contextProvider.context
         if (context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {

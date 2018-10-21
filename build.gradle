@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        android_studio_version = "3.2.0"
+        android_studio_version = "3.2.1"
 
         kotlin_version = '1.2.71'
         dagger_version = '2.17'
@@ -9,7 +9,7 @@ buildscript {
         auto_service_version = '1.0-rc4'
         archknife_version = '0.7.0'
 
-        autotarget_library_version = '0.10.0'
+        autotarget_library_version = '0.11.0'
     }
 
     repositories {
@@ -21,7 +21,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$android_studio_version"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
