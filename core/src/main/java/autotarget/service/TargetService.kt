@@ -40,18 +40,18 @@ open class TargetService @Inject constructor() {
 
         if (containerId == -1) {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
-                    "annotation or set a custom container id using this method.")
-        }
+                    "annotation or set a custom container id using the execute method.")
+        } else {
+            val context = contextProvider.context
+            if (context is HasFragmentFlow && target.state != -1) {
+                val check = context.onShowNextFragment(containerId, target.state, addToBackStack, clearBackStack, bundle)
 
-        val context = contextProvider.context
-        if (context is HasFragmentFlow && containerId != -1 && target.state != -1) {
-            val check = context.onShowNextFragment(containerId, target.state, addToBackStack, clearBackStack, bundle)
-
-            if (!check && context is FragmentActivity) {
+                if (!check && context is FragmentActivity) {
+                    showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
+                }
+            } else if (context is FragmentActivity) {
                 showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
             }
-        } else if (context is FragmentActivity && containerId != -1) {
-            showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
         }
     }
 
@@ -71,7 +71,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun create(target: FragmentTarget, containerId: Int = target.containerId,
-                         addToBackStack: Boolean = true, clearBackStack: Boolean = false): Fragment {
+                    addToBackStack: Boolean = true, clearBackStack: Boolean = false): Fragment {
         val bundle = Bundle()
         for (parameter in target.parameters) {
             parameter.addToBundle(bundle)
@@ -100,7 +100,7 @@ open class TargetService @Inject constructor() {
     }
 
     @JvmOverloads
-    open fun executeIntent(intent: Intent, requestCode: Int = -1) {
+    open fun executeIntent(intent: Intent, requestCode: Int = 0) {
         val context = contextProvider.context
         if (context is Activity && requestCode > 0) {
             context.startActivityForResult(intent, requestCode)
