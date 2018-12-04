@@ -19,8 +19,8 @@ object ProcessorUtil {
         return null
     }
 
-    fun populateParamListBody(list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder, initParamCount: Int): Int {
-        var paramCount = initParamCount
+    fun populateParamListBody(list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
+        var paramCount = 0
 
         list.forEach {
             var valueName = it.name

@@ -53,45 +53,40 @@ class ActivityTargetProcessor {
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { activityName, packageName ->
-            val baseList: ArrayList<TargetParameterItem> = ArrayList()
-            val optionalList: ArrayList<TargetParameterItem> = ArrayList()
+            val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
             val activityClass = ClassName.get(packageName, activityName)
             targetParameterMap?.get(activityName)?.getAnnotation(TargetParameter::class.java)?.value?.forEach {
-                if (it.optional) {
-                    optionalList.add(it)
-                } else {
-                    baseList.add(it)
+                it.group.forEach { group ->
+                    val list = parameterMap[group] ?: ArrayList()
+                    list.add(it)
+                    parameterMap[group] = list
                 }
             }
 
-            val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .addAnnotation(classNonNull)
-                    .returns(classActivityTarget)
+            if(parameterMap.isNotEmpty()) {
+                parameterMap.keys.forEach {
+                    val parameterItems = parameterMap[it]
+                    if(parameterItems?.isNotEmpty() == true) {
+                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}With${it.capitalize()}")
+                                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                                .addAnnotation(classNonNull)
+                                .returns(classActivityTarget)
+                                .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
 
-            if (!baseList.isEmpty()) {
-                methodBuilderBase.addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
-                populateParamListBody(baseList, methodBuilderBase, 0)
-                methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                        populateParamListBody(parameterItems, methodBuilderWithOptionals)
+                        methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                        fileBuilder.addMethod(methodBuilderWithOptionals.build())
+                    }
+                }
             } else {
-                methodBuilderBase.addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
-            }
-
-            fileBuilder.addMethod(methodBuilderBase.build())
-
-            if (!optionalList.isEmpty()) {
-                val methodBuilderWithOptionals = MethodSpec.methodBuilder("show$activityName")
+                val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                         .addAnnotation(classNonNull)
                         .returns(classActivityTarget)
-                        .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+                        .addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
 
-                val paramCountOptional = populateParamListBody(baseList, methodBuilderWithOptionals, 0)
-                populateParamListBody(optionalList, methodBuilderWithOptionals, paramCountOptional)
-
-                methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
-                fileBuilder.addMethod(methodBuilderWithOptionals.build())
+                fileBuilder.addMethod(methodBuilderBase.build())
             }
         }
     }

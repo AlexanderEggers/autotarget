@@ -8,4 +8,9 @@ import kotlin.reflect.KClass
 annotation class TargetParameterItem(val key: String,
                                      val name: String = "unspecified",
                                      val type: KClass<*>,
-                                     val optional: Boolean = false)
+                                     val group: Array<String> = [DEFAULT_GROUP_KEY]) {
+
+    companion object {
+        const val DEFAULT_GROUP_KEY = "default"
+    }
+}

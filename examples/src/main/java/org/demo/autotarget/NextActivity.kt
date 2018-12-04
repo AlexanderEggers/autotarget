@@ -6,11 +6,12 @@ import android.widget.TextView
 import autotarget.annotation.ActivityTarget
 import autotarget.annotation.TargetParameter
 import autotarget.annotation.TargetParameterItem
+import autotarget.annotation.TargetParameterItem.Companion.DEFAULT_GROUP_KEY
 import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
-@TargetParameter([TargetParameterItem(key = MY_KEY, type = String::class, name = "text", optional = false),
-    TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", optional = true)])
+@TargetParameter([TargetParameterItem(key = MY_KEY, type = String::class, name = "text", group = [DEFAULT_GROUP_KEY]),
+    TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", group = ["test"])])
 class NextActivity : AppCompatActivity() {
 
     companion object {

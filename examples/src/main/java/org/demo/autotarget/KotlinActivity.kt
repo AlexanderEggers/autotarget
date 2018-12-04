@@ -21,7 +21,7 @@ class KotlinActivity : AppCompatActivity() {
 
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.execute(ActivityTargets.showJavaActivity())
+            targetService.execute(ActivityTargets.showNextActivityWithTest(0))
         }
     }
 }
