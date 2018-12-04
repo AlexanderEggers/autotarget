@@ -68,7 +68,7 @@ class ActivityTargetProcessor {
                 parameterMap.keys.forEach {
                     val parameterItems = parameterMap[it]
                     if(parameterItems?.isNotEmpty() == true) {
-                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}With${it.capitalize()}")
+                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
                                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                                 .addAnnotation(classNonNull)
                                 .returns(classActivityTarget)

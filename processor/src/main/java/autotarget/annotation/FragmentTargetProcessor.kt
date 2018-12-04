@@ -75,7 +75,7 @@ class FragmentTargetProcessor {
                 parameterMap.keys.forEach {
                     val parameterItems = parameterMap[it]
                     if(parameterItems?.isNotEmpty() == true) {
-                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${fragmentName}With${it.capitalize()}")
+                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${fragmentName}For${it.capitalize()}")
                                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                                 .addAnnotation(classNonNull)
                                 .returns(classFragmentTarget)
