@@ -62,7 +62,7 @@ class DemoFragment : Fragment() {
 
 The library is supporting two ways which will create and display fragments. You can either implement the HasFragmentFlow interface to your activity or rely on the internal implementation. The HasFragmentFlow interface allows you to implement your own solution in how fragments will be created. Due to this implementation you will need to set the state for your fragment within the @FragmentTarget annotation. The method onShowNextFragment is needed to be implemented using the HasFragmentFlow interface, needs a boolean as a return value. This values tells the underlying system if your implemention can handle show Fragment operation or not. This behavior can be handy if you want to quickly debug things without the need to fully implement everything.
 
-The relevant TargetParameterItem annotation can have a key, the type of the parameter, a name and a group array. The parameter name is for the generated method to improve the readability for that specific value. The group array can be used to group parameters. Therefore your activity could have different entry points, like deeplinking, default etc. By default all parameters have the group array "[TargetParameterItem.DEFAULT_GROUP_KEY]"
+The relevant TargetParameterItem annotation can have a key, the type of the parameter, a name and a group array. The parameter name is for the generated method to improve the readability for that specific value. The group array can be used to group parameters. Therefore your activity could have different entry points, like deeplinking, default etc. By default all parameters have the group array "[TargetParameterItem.DEFAULT_GROUP_KEY]".
 
 ```kotlin
 
