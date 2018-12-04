@@ -19,7 +19,7 @@ public class JavaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContextProvider.INSTANCE.setContext(this);
+        ContextProvider.INSTANCE.setActivityContext(this);
 
         setContentView(R.layout.activity_main);
 

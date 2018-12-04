@@ -33,7 +33,7 @@ android {
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 16
         versionName "$autotarget_library_version"
         consumerProguardFiles 'proguard-rules.pro'
     }

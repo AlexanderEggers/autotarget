@@ -1,6 +1,7 @@
 package autotarget.service
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -18,10 +19,11 @@ open class TargetService @Inject constructor() {
     private val contextProvider = ContextProvider
 
     @JvmOverloads
-    open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
+    open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0,
+                     context: Context? = contextProvider.activityContext) {
+
         val intent = create(target, flags, requestCode)
 
-        val context = contextProvider.context
         if (context is Activity && requestCode > 0) {
             context.startActivityForResult(intent, requestCode)
         } else {
@@ -31,7 +33,8 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
-                     addToBackStack: Boolean = true, clearBackStack: Boolean = false) {
+                     addToBackStack: Boolean = true, clearBackStack: Boolean = false,
+                     context: Context? = contextProvider.activityContext) {
 
         val bundle = Bundle()
         for (parameter in target.parameters) {
@@ -42,7 +45,6 @@ open class TargetService @Inject constructor() {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
                     "annotation or set a custom container id using the execute method.")
         } else {
-            val context = contextProvider.context
             if (context is HasFragmentFlow && target.state != -1) {
                 val check = context.onShowNextFragment(containerId, target.state, addToBackStack, clearBackStack, bundle)
 
@@ -56,8 +58,10 @@ open class TargetService @Inject constructor() {
     }
 
     @JvmOverloads
-    open fun create(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0): Intent {
-        val intent = Intent(contextProvider.context, target.targetClass)
+    open fun create(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0,
+                    context: Context? = contextProvider.activityContext): Intent {
+
+        val intent = Intent(context, target.targetClass)
         intent.addFlags(flags)
 
         val bundle = Bundle()
@@ -72,6 +76,7 @@ open class TargetService @Inject constructor() {
     @JvmOverloads
     open fun create(target: FragmentTarget, containerId: Int = target.containerId,
                     addToBackStack: Boolean = true, clearBackStack: Boolean = false): Fragment {
+
         val bundle = Bundle()
         for (parameter in target.parameters) {
             parameter.addToBundle(bundle)
@@ -100,8 +105,9 @@ open class TargetService @Inject constructor() {
     }
 
     @JvmOverloads
-    open fun executeIntent(intent: Intent, requestCode: Int = 0) {
-        val context = contextProvider.context
+    open fun executeIntent(intent: Intent, requestCode: Int = 0,
+                           context: Context? = contextProvider.activityContext) {
+
         if (context is Activity && requestCode > 0) {
             context.startActivityForResult(intent, requestCode)
         } else {
@@ -110,21 +116,21 @@ open class TargetService @Inject constructor() {
     }
 
     open fun clearFragmentBackStack() {
-        val context = contextProvider.context
+        val context = contextProvider.activityContext
         if (context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
             context.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
 
     open fun onBackPressed() {
-        val context = contextProvider.context
+        val context = contextProvider.activityContext
         if (context is Activity) {
             context.onBackPressed()
         }
     }
 
     open fun finish() {
-        val context = contextProvider.context
+        val context = contextProvider.activityContext
         if (context is Activity) {
             context.finish()
         }
@@ -132,7 +138,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun finishWithResult(resultCode: Int, data: Intent? = null) {
-        val context = contextProvider.context
+        val context = contextProvider.activityContext
         if (context is Activity) {
             context.setResult(resultCode, data)
             context.finish()
