@@ -75,7 +75,7 @@ class DemoFragment : Fragment() {
 
 2. Call your target!
 
-Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextProvider class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application! To call your DemoActivity, you need to create a reference of the TargetService class. You need to use one of the execute methods provided by this class. Activity based calls require a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
+Before you can call your DemoActivity, you **have to** inject the current Context object by using the ContextProvider class which is provided by the library. This call simplifies the usage and should avoid dragging the Context reference to each and every part of your application (**if you are using the library [Archknife][3], you don't need to do this step**)! To call your DemoActivity, you need to create a reference of the TargetService class. You need to use one of the execute methods provided by this class. Activity based calls require a ActivityTarget object. This can be received by using the generated class ActivityTargets. This class holds all relevant methods to generate the needed ActivityTarget object for you.
 
 ```kotlin
 
@@ -138,3 +138,4 @@ Apache 2.0. See the [LICENSE][1] file for details.
 
 [1]: https://github.com/Mordag/autotarget/blob/master/LICENSE
 [2]: https://github.com/Mordag
+[3]: https://github.com/Mordag/archknife
