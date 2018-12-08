@@ -2,7 +2,7 @@ buildscript {
     ext {
         android_studio_version = "3.2.1"
 
-        kotlin_version = '1.3.10'
+        kotlin_version = '1.3.11'
         dagger_version = '2.19'
         support_lib_version = '28.0.0'
         javapoet_version = '1.11.1'

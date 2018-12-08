@@ -56,7 +56,8 @@ class ActivityTargetProcessor {
             val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
             val activityClass = ClassName.get(packageName, activityName)
-            targetParameterMap?.get(activityName)?.getAnnotation(TargetParameter::class.java)?.value?.forEach {
+            val targetParameter = targetParameterMap?.get(activityName)?.getAnnotation(TargetParameter::class.java)
+            targetParameter?.value?.forEach {
                 it.group.forEach { group ->
                     val list = parameterMap[group] ?: ArrayList()
                     list.add(it)
@@ -64,30 +65,33 @@ class ActivityTargetProcessor {
                 }
             }
 
-            if(parameterMap.isNotEmpty()) {
-                parameterMap.keys.forEach {
-                    val parameterItems = parameterMap[it]
-                    if(parameterItems?.isNotEmpty() == true) {
-                        val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
-                                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                                .addAnnotation(classNonNull)
-                                .returns(classActivityTarget)
-                                .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+            val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
+            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(activityClass, activityName, fileBuilder)
 
-                        populateParamListBody(parameterItems, methodBuilderWithOptionals)
-                        methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
-                        fileBuilder.addMethod(methodBuilderWithOptionals.build())
-                    }
+            parameterMap.keys.forEach {
+                val parameterItems = parameterMap[it]
+                if(parameterItems?.isNotEmpty() == true) {
+                    val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                            .addAnnotation(classNonNull)
+                            .returns(classActivityTarget)
+                            .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+
+                    populateParamListBody(parameterItems, methodBuilderWithOptionals)
+                    methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                    fileBuilder.addMethod(methodBuilderWithOptionals.build())
                 }
-            } else {
-                val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
-                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                        .addAnnotation(classNonNull)
-                        .returns(classActivityTarget)
-                        .addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
-
-                fileBuilder.addMethod(methodBuilderBase.build())
             }
         }
+    }
+
+    private fun createDefaultTargetMethod(activityClass: ClassName, activityName: String, fileBuilder: TypeSpec.Builder) {
+        val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addAnnotation(classNonNull)
+                .returns(classActivityTarget)
+                .addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
+
+        fileBuilder.addMethod(methodBuilderBase.build())
     }
 }
