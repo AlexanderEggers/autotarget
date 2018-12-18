@@ -26,6 +26,12 @@ open class TargetService @Inject constructor() {
         val intent = create(target, flags, requestCode)
         if (context != null && context is Activity && requestCode > 0) {
             context.startActivityForResult(intent, requestCode)
+
+            val enterAnimation = target.enterAnimation
+            val exitAnimation = target.exitAnimation
+            if(enterAnimation != -1 && exitAnimation != -1) {
+                context.overridePendingTransition(target.enterAnimation, target.exitAnimation)
+            }
         } else context?.startActivity(intent)
     }
 
@@ -91,8 +97,16 @@ open class TargetService @Inject constructor() {
         if (clearBackStack) clearFragmentBackStack()
         if (addToBackStack) ft.addToBackStack(null)
 
+        val enterAnimation = target.enterAnimation
+        val exitAnimation = target.exitAnimation
+        val popEnterAnimation = target.enterAnimation
+        val popExitAnimation = target.exitAnimation
+
+        if(enterAnimation != -1 && exitAnimation != -1 && popEnterAnimation != -1 && popExitAnimation != -1) {
+            ft.setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
+        } else if(enterAnimation != -1 && exitAnimation != -1) ft.setCustomAnimations(enterAnimation, exitAnimation)
+
         ft.commit()
-        context.supportFragmentManager.executePendingTransactions()
     }
 
     @JvmOverloads
@@ -111,22 +125,34 @@ open class TargetService @Inject constructor() {
         }
     }
 
-    open fun onBackPressed() {
+    open fun onBackPressed(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.onBackPressed()
+        if(enterAnimation != -1 && exitAnimation != -1) {
+            activity?.overridePendingTransition(enterAnimation, exitAnimation)
+        }
     }
 
-    open fun finish() {
+    open fun finish(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.finish()
+        if(enterAnimation != -1 && exitAnimation != -1) {
+            activity?.overridePendingTransition(enterAnimation, exitAnimation)
+        }
     }
 
     @JvmOverloads
-    open fun finishWithResult(resultCode: Int, data: Intent? = null) {
+    open fun finishWithResult(resultCode: Int, data: Intent? = null,
+                              enterAnimation: Int = -1, exitAnimation: Int = -1) {
+
         val activity = contextProvider?.activity
         if (activity != null) {
             activity.setResult(resultCode, data)
             activity.finish()
+
+            if(enterAnimation != -1 && exitAnimation != -1) {
+                activity.overridePendingTransition(enterAnimation, exitAnimation)
+            }
         }
     }
 }

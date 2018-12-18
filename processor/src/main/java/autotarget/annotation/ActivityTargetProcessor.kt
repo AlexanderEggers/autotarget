@@ -20,7 +20,8 @@ class ActivityTargetProcessor {
     private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
-    private var targetParameterMap: HashMap<String, Element>? = null
+    private var targetParameterMap: HashMap<String, Element> = HashMap()
+    private var activityAnnotationMap: HashMap<String, Element> = HashMap()
 
     fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
         targetParameterMap = mainProcessor.targetParameterMap
@@ -48,6 +49,7 @@ class ActivityTargetProcessor {
             val typeElement = it as TypeElement
             activitiesWithPackage[typeElement.simpleName.toString()] =
                     mainProcessor.elements.getPackageOf(typeElement).qualifiedName.toString()
+            activityAnnotationMap[typeElement.simpleName.toString()] = it
         }
     }
 
@@ -55,8 +57,12 @@ class ActivityTargetProcessor {
         activitiesWithPackage.forEach { activityName, packageName ->
             val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
+            val annotationElement: Element = activityAnnotationMap[activityName]!!
+            val enterAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).enterAnimation
+            val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
+
             val activityClass = ClassName.get(packageName, activityName)
-            val targetParameter = targetParameterMap?.get(activityName)?.getAnnotation(TargetParameter::class.java)
+            val targetParameter = targetParameterMap[activityName]?.getAnnotation(TargetParameter::class.java)
             targetParameter?.value?.forEach {
                 it.group.forEach { group ->
                     val list = parameterMap[group] ?: ArrayList()
@@ -66,7 +72,8 @@ class ActivityTargetProcessor {
             }
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(activityClass, activityName, fileBuilder)
+            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
+                    activityClass, activityName, enterAnimation, exitAnimation, fileBuilder)
 
             parameterMap.keys.forEach {
                 val parameterItems = parameterMap[it]
@@ -78,19 +85,23 @@ class ActivityTargetProcessor {
                             .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
 
                     populateParamListBody(parameterItems, methodBuilderWithOptionals)
-                    methodBuilderWithOptionals.addStatement("return new $classActivityTarget($activityClass.class, parameterList)")
+                    methodBuilderWithOptionals.addStatement("return new $classActivityTarget(" +
+                            "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
                     fileBuilder.addMethod(methodBuilderWithOptionals.build())
                 }
             }
         }
     }
 
-    private fun createDefaultTargetMethod(activityClass: ClassName, activityName: String, fileBuilder: TypeSpec.Builder) {
+    private fun createDefaultTargetMethod(activityClass: ClassName, activityName: String,
+                                          enterAnimation: Int, exitAnimation: Int, fileBuilder: TypeSpec.Builder) {
+
         val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addAnnotation(classNonNull)
                 .returns(classActivityTarget)
-                .addStatement("return new $classActivityTarget($activityClass.class, new $arrayListOfParameterProvider())")
+                .addStatement("return new $classActivityTarget($activityClass.class, $enterAnimation, " +
+                        "$exitAnimation, new $arrayListOfParameterProvider())")
 
         fileBuilder.addMethod(methodBuilderBase.build())
     }
