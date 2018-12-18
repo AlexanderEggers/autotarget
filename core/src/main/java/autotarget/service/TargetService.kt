@@ -24,15 +24,16 @@ open class TargetService @Inject constructor() {
                      context: Context? = contextProvider?.activityContext) {
 
         val intent = create(target, flags, requestCode)
-        if (context != null && context is Activity && requestCode > 0) {
-            context.startActivityForResult(intent, requestCode)
+        if (context != null) {
+            if(context is Activity && requestCode > 0) context.startActivityForResult(intent, requestCode)
+            else context.startActivity(intent)
 
             val enterAnimation = target.enterAnimation
             val exitAnimation = target.exitAnimation
-            if(enterAnimation != -1 && exitAnimation != -1) {
+            if(context is Activity && enterAnimation != -1 && exitAnimation != -1) {
                 context.overridePendingTransition(target.enterAnimation, target.exitAnimation)
             }
-        } else context?.startActivity(intent)
+        }
     }
 
     @JvmOverloads
