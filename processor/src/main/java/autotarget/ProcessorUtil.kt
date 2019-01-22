@@ -50,8 +50,8 @@ object ProcessorUtil {
         return paramCount
     }
 
-    val classNullable: ClassName = ClassName.get("android.support.annotation", "Nullable")
-    val classNonNull: ClassName = ClassName.get("android.support.annotation", "NonNull")
+    val classNullable: ClassName = ClassName.get("androidx.annotation", "Nullable")
+    val classNonNull: ClassName = ClassName.get("androidx.annotation", "NonNull")
 
     val classActivityTarget: ClassName = ClassName.get("autotarget.service", "ActivityTarget")
     val classFragmentTarget: ClassName = ClassName.get("autotarget.service", "FragmentTarget")
