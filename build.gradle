@@ -10,7 +10,7 @@ buildscript {
         dagger_version = '2.21'
         javapoet_version = '1.11.1'
         auto_service_version = '1.0-rc4'
-        archknife_version = '0.9.2'
+        archknife_version = '0.10.0'
 
         autotarget_library_version = '0.14.0'
     }
