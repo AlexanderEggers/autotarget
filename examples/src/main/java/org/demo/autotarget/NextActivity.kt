@@ -1,7 +1,7 @@
 package org.demo.autotarget
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import autotarget.annotation.ActivityTarget
 import autotarget.annotation.TargetParameter

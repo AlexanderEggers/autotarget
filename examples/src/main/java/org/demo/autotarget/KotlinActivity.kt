@@ -1,7 +1,7 @@
 package org.demo.autotarget
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import archknife.context.ContextProvider
 import autotarget.annotation.ActivityTarget
