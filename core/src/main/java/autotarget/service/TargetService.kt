@@ -112,11 +112,16 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun executeIntent(intent: Intent, requestCode: Int = 0,
-                           context: Context? = contextProvider?.activityContext) {
+                           context: Context? = contextProvider?.activityContext,
+                           enterAnimation: Int = -1, exitAnimation: Int = -1) {
 
         if (context != null && context is Activity && requestCode > 0) {
             context.startActivityForResult(intent, requestCode)
         } else context?.startActivity(intent)
+
+        if(context is Activity && enterAnimation != -1 && exitAnimation != -1) {
+            context.overridePendingTransition(enterAnimation, exitAnimation)
+        }
     }
 
     open fun clearFragmentBackStack() {
