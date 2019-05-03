@@ -6,10 +6,12 @@ ext {
     bintrayName = 'autotarget-fragment'
 
     publishedGroupId = 'org.autotarget'
-    libraryName = 'autotarget-fragment'
+    libraryName = 'AutoTarget Fragment Artifact'
     artifact = 'autotarget-fragment'
+    libraryYear = '2019'
 
-    libraryDescription = 'Android library to simplify navigation and services for your app.'
+    libraryDescription = 'The AutoTarget Fragment Artifact is providing an additional fragment ' +
+            'related classes for the AutoTaget library usage.'
 
     siteUrl = 'https://github.com/Mordag/autotarget'
     gitUrl = 'https://github.com/Mordag/autotarget.git'
@@ -19,9 +21,7 @@ ext {
     developerId = 'mordag'
     developerName = 'Alexander Eggers'
 
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file("local.properties").newDataInputStream())
-    developerEmail = properties.getProperty("user.email", "")
+    developerEmail = ''
 
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
@@ -53,5 +53,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+if (project.rootProject.file('local.properties').exists()) {
+    apply from: 'https://raw.githubusercontent.com/Mordag/JCenter/master/install.gradle'
+    apply from: 'https://raw.githubusercontent.com/Mordag/JCenter/master/bintray.gradle'
+}
