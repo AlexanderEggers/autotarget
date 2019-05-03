@@ -131,6 +131,7 @@ open class TargetService @Inject constructor() {
         }
     }
 
+    @JvmOverloads
     open fun onBackPressed(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.onBackPressed()
@@ -139,6 +140,7 @@ open class TargetService @Inject constructor() {
         }
     }
 
+    @JvmOverloads
     open fun finish(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.finish()
