@@ -52,14 +52,13 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$support_lib_appcompat_version"
-    implementation "com.google.dagger:dagger:$dagger_version"
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    implementation "org.archtree:archtree-builder:$archtree_version"
+
     api "org.archknife:archknife-context:$archknife_version"
 
     api project(":autotarget-annotation")
     //api "org.autotarget:autotarget-annotation:$autotarget_library_version"
-
-    api project(":autotarget-fragment")
-    //api "org.autotarget:autotarget-fragment:$autotarget_library_version"
 }
 
 if (project.rootProject.file('local.properties').exists()) {

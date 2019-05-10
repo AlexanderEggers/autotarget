@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import android.util.Log
 import archknife.context.ContextProvider
 import archknife.context.ContextProviderCommunicator
+import archtree.FragmentDispatcher
 import autotarget.util.HasFragmentFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,7 +39,6 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
-                     addToBackStack: Boolean = true, clearBackStack: Boolean = false,
                      context: Context? = contextProvider?.activityContext) {
 
         val bundle = Bundle()
@@ -48,14 +48,17 @@ open class TargetService @Inject constructor() {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
                     "annotation or set a custom container id using the execute method.")
         } else {
-            if (context != null && context is HasFragmentFlow && target.state != -1) {
-                val check = context.onShowNextFragment(containerId, target.state, addToBackStack, clearBackStack, bundle)
+            var check = false
+            if (context != null && context is FragmentDispatcher && target.state != -1) {
+                check = context.showFragment(containerId, target.state, bundle)
+            }
 
-                if (!check && context is FragmentActivity) {
-                    showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
-                }
-            } else if (context != null && context is FragmentActivity) {
-                showFragmentAsDefault(target, containerId, addToBackStack, clearBackStack, bundle, context)
+            if (!check && context != null && context is HasFragmentFlow && target.state != -1) {
+                check = context.onShowNextFragment(containerId, target.state, bundle)
+            }
+
+            if (!check && context != null && context is FragmentActivity) {
+                showFragmentAsDefault(target, containerId, bundle, context)
             }
         }
     }
@@ -74,8 +77,7 @@ open class TargetService @Inject constructor() {
     }
 
     @JvmOverloads
-    open fun create(target: FragmentTarget, containerId: Int = target.containerId,
-                    addToBackStack: Boolean = true, clearBackStack: Boolean = false): Fragment {
+    open fun create(target: FragmentTarget, containerId: Int = target.containerId): Fragment {
 
         val bundle = Bundle()
         for (parameter in target.parameters) { parameter.addToBundle(bundle) }
@@ -87,16 +89,12 @@ open class TargetService @Inject constructor() {
     }
 
     private fun showFragmentAsDefault(target: FragmentTarget, containerId: Int = target.containerId,
-                                      addToBackStack: Boolean, clearBackStack: Boolean,
                                       bundle: Bundle, context: FragmentActivity) {
         val fragment = target.fragment
         fragment.arguments = bundle
 
         val ft = context.supportFragmentManager.beginTransaction()
         ft.replace(containerId, fragment, target.tag)
-
-        if (clearBackStack) clearFragmentBackStack()
-        if (addToBackStack) ft.addToBackStack(null)
 
         val enterAnimation = target.enterAnimation
         val exitAnimation = target.exitAnimation

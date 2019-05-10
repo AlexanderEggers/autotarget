@@ -1,7 +1,6 @@
-include ':examples', ':annotation', ':processor', ':core', ':fragment'
+include ':examples', ':annotation', ':processor', ':core'
 project(":examples").name = "autotarget-examples"
 project(":annotation").name = "autotarget-annotation"
-project(":fragment").name = "autotarget-fragment"
 project(":processor").name = "autotarget-processor"
 project(":core").name = "autotarget-core"
 rootProject.name = "autotarget-library"
