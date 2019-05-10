@@ -11,7 +11,7 @@ import android.util.Log
 import archknife.context.ContextProvider
 import archknife.context.ContextProviderCommunicator
 import archtree.FragmentDispatcher
-import autotarget.util.HasFragmentFlow
+import autotarget.util.AutoTargetFragmentDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -53,8 +53,8 @@ open class TargetService @Inject constructor() {
                 check = context.showFragment(containerId, target.state, bundle)
             }
 
-            if (!check && context != null && context is HasFragmentFlow && target.state != -1) {
-                check = context.onShowNextFragment(containerId, target.state, bundle)
+            if (!check && context != null && context is AutoTargetFragmentDispatcher && target.state != -1) {
+                check = context.onShowNextFragment(target, target.state, containerId, bundle)
             }
 
             if (!check && context != null && context is FragmentActivity) {
