@@ -54,7 +54,7 @@ class ActivityTargetProcessor {
     }
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
-        activitiesWithPackage.forEach { activityName, packageName ->
+        activitiesWithPackage.forEach { (activityName, packageName) ->
             val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
             val annotationElement: Element = activityAnnotationMap[activityName]!!

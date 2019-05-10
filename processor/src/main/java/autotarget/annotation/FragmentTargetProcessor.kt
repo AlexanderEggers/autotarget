@@ -54,7 +54,7 @@ class FragmentTargetProcessor {
     }
 
     private fun createMethods(fileBuilder: TypeSpec.Builder) {
-        fragmentsWithPackage.forEach { fragmentName, packageName ->
+        fragmentsWithPackage.forEach { (fragmentName, packageName) ->
             val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
             val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
