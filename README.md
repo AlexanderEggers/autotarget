@@ -14,22 +14,20 @@ repositories {
 }
 
 dependencies {
-   def autotarget_version = "0.14.1"
+   def autotarget_version = "0.16.0"
 
   //Bundles all artifacts for the library including some additional helper classes
   implementation "org.autotarget:autotarget-core:$autotarget_version"
 
   //Only for annotation classes
   implementation "org.autotarget:autotarget-annotation:$autotarget_version"
-  //Only for fragment helper class
-  implementation "org.autotarget:autotarget-fragment:$autotarget_version"
   
   //requires autotarget-core to work
   kapt "org.autotarget:autotarget-processor:$autotarget_version"
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 0.14.1)
+How do I use AutoTarget? (Step-by-step introduction for 0.16.0)
 -------------------
 
 1. Add the annotations
@@ -116,6 +114,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 ```
+TODO: Documentation about ActivityBundles/FragmentBundles.
 
 Status
 ------
