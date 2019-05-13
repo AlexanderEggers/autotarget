@@ -23,8 +23,10 @@ class ActivityTargetProcessor {
     private var targetParameterMap: HashMap<String, Element> = HashMap()
     private var activityAnnotationMap: HashMap<String, Element> = HashMap()
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        targetParameterMap = mainProcessor.targetParameterMap
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment,
+                targetParameterMap: HashMap<String, Element>) {
+
+        this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
                 .addModifiers(Modifier.PUBLIC)
@@ -62,7 +64,7 @@ class ActivityTargetProcessor {
             val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
 
             val activityClass = ClassName.get(packageName, activityName)
-            val targetParameter = targetParameterMap[activityName]?.getAnnotation(TargetParameter::class.java)
+            val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
             targetParameter?.value?.forEach {
                 it.group.forEach { group ->
                     val list = parameterMap[group] ?: ArrayList()

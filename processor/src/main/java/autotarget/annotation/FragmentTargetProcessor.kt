@@ -23,8 +23,10 @@ class FragmentTargetProcessor {
     private var targetParameterMap: HashMap<String, Element> = HashMap()
     private var fragmentAnnotationMap: HashMap<String, Element> = HashMap()
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        targetParameterMap = mainProcessor.targetParameterMap
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment,
+                targetParameterMap: HashMap<String, Element>) {
+
+        this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("FragmentTargets")
                 .addModifiers(Modifier.PUBLIC)

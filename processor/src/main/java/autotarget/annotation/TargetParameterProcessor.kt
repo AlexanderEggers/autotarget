@@ -2,11 +2,14 @@ package autotarget.annotation
 
 import autotarget.MainProcessor
 import javax.annotation.processing.RoundEnvironment
+import javax.lang.model.element.Element
 import javax.tools.Diagnostic
 
 class TargetParameterProcessor {
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment): HashMap<String, Element> {
+        val targetParameterMap = HashMap<String, Element>()
+
         for (it in roundEnv.getElementsAnnotatedWith(TargetParameter::class.java)) {
             if (!it.kind.isClass) {
                 mainProcessor.messager.printMessage(Diagnostic.Kind.ERROR,
@@ -15,7 +18,9 @@ class TargetParameterProcessor {
             }
 
             val className = it.simpleName.toString()
-            mainProcessor.targetParameterMap[className] = it
+            targetParameterMap[className] = it
         }
+
+        return targetParameterMap
     }
 }
