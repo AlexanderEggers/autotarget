@@ -5,7 +5,6 @@ import com.google.auto.service.AutoService
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 
@@ -15,7 +14,6 @@ class MainProcessor : AbstractProcessor() {
     lateinit var filer: Filer
     lateinit var messager: Messager
     lateinit var elements: Elements
-    val targetParameterMap: HashMap<String, Element> = HashMap()
 
     @Synchronized
     override fun init(processingEnvironment: ProcessingEnvironment) {
@@ -28,9 +26,15 @@ class MainProcessor : AbstractProcessor() {
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         try {
             //Annotation processor part - like for the annotation @ActivityTarget
-            TargetParameterProcessor().process(this, roundEnv)
-            ActivityTargetProcessor().process(this, roundEnv)
-            FragmentTargetProcessor().process(this, roundEnv)
+            val targetParameterMap = TargetParameterProcessor().process(this, roundEnv)
+
+            ActivityTargetProcessor().process(this, roundEnv, targetParameterMap)
+            val activityBundleClasses = ActivityBundleModelProcessor().process(this, roundEnv)
+            ActivityBundleProviderProcessor().process(this, activityBundleClasses)
+
+            FragmentTargetProcessor().process(this, roundEnv, targetParameterMap)
+            val fragmentBundleClasses = FragmentBundleModelProcessor().process(this, roundEnv)
+            FragmentBundleProviderProcessor().process(this, fragmentBundleClasses)
         } catch (e: IOException) {
             e.printStackTrace()
         }

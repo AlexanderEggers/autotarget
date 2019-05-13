@@ -23,11 +23,13 @@ class ActivityTargetProcessor {
     private var targetParameterMap: HashMap<String, Element> = HashMap()
     private var activityAnnotationMap: HashMap<String, Element> = HashMap()
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        targetParameterMap = mainProcessor.targetParameterMap
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment,
+                targetParameterMap: HashMap<String, Element>) {
+
+        this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
         preparePackageMap(mainProcessor, roundEnv)
         createMethods(fileBuilder)
@@ -62,7 +64,7 @@ class ActivityTargetProcessor {
             val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
 
             val activityClass = ClassName.get(packageName, activityName)
-            val targetParameter = targetParameterMap[activityName]?.getAnnotation(TargetParameter::class.java)
+            val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
             targetParameter?.value?.forEach {
                 it.group.forEach { group ->
                     val list = parameterMap[group] ?: ArrayList()
@@ -72,12 +74,12 @@ class ActivityTargetProcessor {
             }
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
+            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
                     activityClass, activityName, enterAnimation, exitAnimation, fileBuilder)
 
             parameterMap.keys.forEach {
                 val parameterItems = parameterMap[it]
-                if(parameterItems?.isNotEmpty() == true) {
+                if (parameterItems?.isNotEmpty() == true) {
                     val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addAnnotation(classNonNull)

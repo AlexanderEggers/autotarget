@@ -23,11 +23,13 @@ class FragmentTargetProcessor {
     private var targetParameterMap: HashMap<String, Element> = HashMap()
     private var fragmentAnnotationMap: HashMap<String, Element> = HashMap()
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
-        targetParameterMap = mainProcessor.targetParameterMap
+    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment,
+                targetParameterMap: HashMap<String, Element>) {
+
+        this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("FragmentTargets")
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
         preparePackageMap(mainProcessor, roundEnv)
         createMethods(fileBuilder)
@@ -78,13 +80,13 @@ class FragmentTargetProcessor {
             }
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
+            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
                     fragmentClass, fragmentName, state, containerId, tag, enterAnimation,
                     exitAnimation, popEnterAnimation, popExitAnimation, fileBuilder)
 
             parameterMap.keys.forEach {
                 val parameterItems = parameterMap[it]
-                if(parameterItems?.isNotEmpty() == true) {
+                if (parameterItems?.isNotEmpty() == true) {
                     val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${fragmentName}For${it.capitalize()}")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addAnnotation(classNonNull)

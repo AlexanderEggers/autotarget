@@ -4,10 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import android.util.Log
 import archknife.context.ContextProvider
 import archknife.context.ContextProviderCommunicator
 import archtree.FragmentDispatcher
@@ -26,12 +26,12 @@ open class TargetService @Inject constructor() {
 
         val intent = create(target, flags, requestCode)
         if (context != null) {
-            if(context is Activity && requestCode > 0) context.startActivityForResult(intent, requestCode)
+            if (context is Activity && requestCode > 0) context.startActivityForResult(intent, requestCode)
             else context.startActivity(intent)
 
             val enterAnimation = target.enterAnimation
             val exitAnimation = target.exitAnimation
-            if(context is Activity && enterAnimation != -1 && exitAnimation != -1) {
+            if (context is Activity && enterAnimation != -1 && exitAnimation != -1) {
                 context.overridePendingTransition(target.enterAnimation, target.exitAnimation)
             }
         }
@@ -42,7 +42,9 @@ open class TargetService @Inject constructor() {
                      context: Context? = contextProvider?.activityContext) {
 
         val bundle = Bundle()
-        for (parameter in target.parameters) { parameter.addToBundle(bundle) }
+        for (parameter in target.parameters) {
+            parameter.addToBundle(bundle)
+        }
 
         if (containerId == -1) {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
@@ -80,7 +82,9 @@ open class TargetService @Inject constructor() {
     open fun create(target: FragmentTarget, containerId: Int = target.containerId): Fragment {
 
         val bundle = Bundle()
-        for (parameter in target.parameters) { parameter.addToBundle(bundle) }
+        for (parameter in target.parameters) {
+            parameter.addToBundle(bundle)
+        }
 
         val fragment = target.fragment
         fragment.arguments = bundle
@@ -101,9 +105,9 @@ open class TargetService @Inject constructor() {
         val popEnterAnimation = target.popEnterAnimation
         val popExitAnimation = target.popExitAnimation
 
-        if(enterAnimation != -1 && exitAnimation != -1 && popEnterAnimation != -1 && popExitAnimation != -1) {
+        if (enterAnimation != -1 && exitAnimation != -1 && popEnterAnimation != -1 && popExitAnimation != -1) {
             ft.setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
-        } else if(enterAnimation != -1 && exitAnimation != -1) ft.setCustomAnimations(enterAnimation, exitAnimation)
+        } else if (enterAnimation != -1 && exitAnimation != -1) ft.setCustomAnimations(enterAnimation, exitAnimation)
 
         ft.commit()
     }
@@ -117,7 +121,7 @@ open class TargetService @Inject constructor() {
             context.startActivityForResult(intent, requestCode)
         } else context?.startActivity(intent)
 
-        if(context is Activity && enterAnimation != -1 && exitAnimation != -1) {
+        if (context is Activity && enterAnimation != -1 && exitAnimation != -1) {
             context.overridePendingTransition(enterAnimation, exitAnimation)
         }
     }
@@ -133,7 +137,7 @@ open class TargetService @Inject constructor() {
     open fun onBackPressed(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.onBackPressed()
-        if(enterAnimation != -1 && exitAnimation != -1) {
+        if (enterAnimation != -1 && exitAnimation != -1) {
             activity?.overridePendingTransition(enterAnimation, exitAnimation)
         }
     }
@@ -142,7 +146,7 @@ open class TargetService @Inject constructor() {
     open fun finish(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val activity = contextProvider?.activity
         activity?.finish()
-        if(enterAnimation != -1 && exitAnimation != -1) {
+        if (enterAnimation != -1 && exitAnimation != -1) {
             activity?.overridePendingTransition(enterAnimation, exitAnimation)
         }
     }
@@ -156,7 +160,7 @@ open class TargetService @Inject constructor() {
             activity.setResult(resultCode, data)
             activity.finish()
 
-            if(enterAnimation != -1 && exitAnimation != -1) {
+            if (enterAnimation != -1 && exitAnimation != -1) {
                 activity.overridePendingTransition(enterAnimation, exitAnimation)
             }
         }
