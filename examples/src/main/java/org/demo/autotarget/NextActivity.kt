@@ -7,6 +7,7 @@ import autotarget.annotation.ActivityTarget
 import autotarget.annotation.TargetParameter
 import autotarget.annotation.TargetParameterItem
 import autotarget.annotation.TargetParameterItem.Companion.DEFAULT_GROUP_KEY
+import autotarget.generated.ActivityBundles
 import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
@@ -23,6 +24,8 @@ class NextActivity : AppCompatActivity() {
         setContentView(R.layout.activity_next)
 
         val textView = findViewById<TextView>(R.id.textView)
-        textView.text = intent.extras?.getString(MY_KEY)
+
+        val model = ActivityBundles.getNextActivityBundleModel(intent.extras)
+        textView.text = model.text
     }
 }

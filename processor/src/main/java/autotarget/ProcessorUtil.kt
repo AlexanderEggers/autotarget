@@ -87,11 +87,13 @@ object ProcessorUtil {
                 else -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
             }
 
-            builder.addMethod(MethodSpec.methodBuilder("get${valueName.substring(0, 1).toUpperCase() + valueName.substring(1)}")
+            val valueGetter = MethodSpec.methodBuilder("get${valueName.substring(0, 1).toUpperCase() + valueName.substring(1)}")
                     .addModifiers(Modifier.PUBLIC)
                     .returns(valueType)
                     .addStatement("return $valueName")
-                    .build())
+
+            if(typeMirror !is PrimitiveType) valueGetter.addAnnotation(classNullable)
+            builder.addMethod(valueGetter.build())
         }
 
         builder.addMethod(constructorBuilder.build())
