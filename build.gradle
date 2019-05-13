@@ -12,7 +12,7 @@ buildscript {
         auto_service_version = '1.0-rc5'
 
         archknife_version = '0.11.0'
-        archtree_version = '0.22.1'
+        archtree_version = '0.22.3'
 
         autotarget_library_version = '0.16.0'
     }
