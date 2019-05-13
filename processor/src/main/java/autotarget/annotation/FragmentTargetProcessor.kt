@@ -29,7 +29,7 @@ class FragmentTargetProcessor {
         this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("FragmentTargets")
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
         preparePackageMap(mainProcessor, roundEnv)
         createMethods(fileBuilder)

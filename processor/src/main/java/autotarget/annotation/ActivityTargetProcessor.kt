@@ -29,7 +29,7 @@ class ActivityTargetProcessor {
         this.targetParameterMap = targetParameterMap
 
         val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
         preparePackageMap(mainProcessor, roundEnv)
         createMethods(fileBuilder)

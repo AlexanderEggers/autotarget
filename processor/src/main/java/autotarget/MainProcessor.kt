@@ -30,10 +30,11 @@ class MainProcessor : AbstractProcessor() {
 
             ActivityTargetProcessor().process(this, roundEnv, targetParameterMap)
             val activityBundleClasses = ActivityBundleModelProcessor().process(this, roundEnv)
+            ActivityBundleProviderProcessor().process(this, activityBundleClasses)
 
             FragmentTargetProcessor().process(this, roundEnv, targetParameterMap)
             val fragmentBundleClasses = FragmentBundleModelProcessor().process(this, roundEnv)
-
+            FragmentBundleProviderProcessor().process(this, fragmentBundleClasses)
         } catch (e: IOException) {
             e.printStackTrace()
         }

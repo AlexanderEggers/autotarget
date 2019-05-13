@@ -1,11 +1,9 @@
 package autotarget.annotation
 
 import autotarget.MainProcessor
-import autotarget.ProcessorUtil.classBundle
 import autotarget.ProcessorUtil.populateBundleModel
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -38,7 +36,7 @@ abstract class BundleModelProcessor {
     }
 
     private fun createClasses(mainProcessor: MainProcessor, annotationMap: HashMap<String, Element>): HashMap<String, ClassName> {
-        val activityBundleModelMap = HashMap<String, ClassName>()
+        val bundleModelMap = HashMap<String, ClassName>()
 
         annotationMap.forEach { (className, annotationElement) ->
             val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
@@ -56,11 +54,11 @@ abstract class BundleModelProcessor {
                     .build()
                     .writeTo(mainProcessor.filer)
 
-            activityBundleModelMap[className] = ClassName.get(
+            bundleModelMap[className] = ClassName.get(
                     "autotarget.generated", "${className}BundleModel")
         }
 
-        return activityBundleModelMap
+        return bundleModelMap
     }
 
     abstract fun <T: Annotation> getElementAnnotationClass(): Class<T>

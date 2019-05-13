@@ -53,7 +53,12 @@ object ProcessorUtil {
         var paramCount = 0
 
         val constructorBuilder = MethodSpec.constructorBuilder()
-                .addParameter(classBundle, "bundle")
+                .addParameter(ParameterSpec.builder(classBundle, "bundle")
+                        .addAnnotation(classNullable)
+                        .build()
+                )
+                .addStatement("if(bundle == null) return")
+                .addCode("\n")
 
         list.forEach {
             var valueName = it.name
