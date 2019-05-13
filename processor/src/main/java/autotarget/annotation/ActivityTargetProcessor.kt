@@ -74,12 +74,12 @@ class ActivityTargetProcessor {
             }
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
+            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
                     activityClass, activityName, enterAnimation, exitAnimation, fileBuilder)
 
             parameterMap.keys.forEach {
                 val parameterItems = parameterMap[it]
-                if(parameterItems?.isNotEmpty() == true) {
+                if (parameterItems?.isNotEmpty() == true) {
                     val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addAnnotation(classNonNull)

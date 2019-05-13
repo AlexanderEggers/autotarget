@@ -61,5 +61,5 @@ abstract class BundleModelProcessor {
         return bundleModelMap
     }
 
-    abstract fun <T: Annotation> getElementAnnotationClass(): Class<T>
+    abstract fun <T : Annotation> getElementAnnotationClass(): Class<T>
 }

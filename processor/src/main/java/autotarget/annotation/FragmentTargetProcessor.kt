@@ -80,13 +80,13 @@ class FragmentTargetProcessor {
             }
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if(forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
+            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
                     fragmentClass, fragmentName, state, containerId, tag, enterAnimation,
                     exitAnimation, popEnterAnimation, popExitAnimation, fileBuilder)
 
             parameterMap.keys.forEach {
                 val parameterItems = parameterMap[it]
-                if(parameterItems?.isNotEmpty() == true) {
+                if (parameterItems?.isNotEmpty() == true) {
                     val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${fragmentName}For${it.capitalize()}")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addAnnotation(classNonNull)
