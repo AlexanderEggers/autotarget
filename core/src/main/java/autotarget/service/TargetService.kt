@@ -8,14 +8,14 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import archknife.context.ContextProviderCommunicator
+import archknife.context.ContextProvider
 import archtree.FragmentDispatcher
 import autotarget.util.AutoTargetFragmentDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class TargetService @Inject constructor(private val contextProvider: ContextProviderCommunicator) {
+open class TargetService @Inject constructor(private val contextProvider: ContextProvider) {
 
     @JvmOverloads
     open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0,
