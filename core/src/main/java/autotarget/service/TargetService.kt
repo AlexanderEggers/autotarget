@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import archknife.context.ContextProvider
 import archknife.context.ContextProviderCommunicator
 import archtree.FragmentDispatcher
 import autotarget.util.AutoTargetFragmentDispatcher
@@ -16,13 +15,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class TargetService @Inject constructor() {
-
-    private val contextProvider: ContextProviderCommunicator? = ContextProvider
+open class TargetService @Inject constructor(private val contextProvider: ContextProviderCommunicator) {
 
     @JvmOverloads
     open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0,
-                     context: Context? = contextProvider?.activityContext) {
+                     context: Context? = contextProvider.activityContext) {
 
         val intent = create(target, flags, requestCode)
         if (context != null) {
@@ -39,7 +36,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun execute(target: FragmentTarget, containerId: Int = target.containerId,
-                     context: Context? = contextProvider?.activityContext) {
+                     context: Context? = contextProvider.activityContext) {
 
         val bundle = Bundle()
         for (parameter in target.parameters) {
@@ -67,7 +64,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun create(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0,
-                    context: Context? = contextProvider?.activityContext): Intent {
+                    context: Context? = contextProvider.activityContext): Intent {
 
         val intent = Intent(context, target.targetClass)
         intent.addFlags(flags)
@@ -114,7 +111,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun executeIntent(intent: Intent, requestCode: Int = 0,
-                           context: Context? = contextProvider?.activityContext,
+                           context: Context? = contextProvider.activityContext,
                            enterAnimation: Int = -1, exitAnimation: Int = -1) {
 
         if (context != null && context is Activity && requestCode > 0) {
@@ -127,7 +124,7 @@ open class TargetService @Inject constructor() {
     }
 
     open fun clearFragmentBackStack() {
-        val context = contextProvider?.activityContext
+        val context = contextProvider.activityContext
         if (context != null && context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
             context.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
@@ -135,7 +132,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun onBackPressed(enterAnimation: Int = -1, exitAnimation: Int = -1) {
-        val activity = contextProvider?.activity
+        val activity = contextProvider.activity
         activity?.onBackPressed()
         if (enterAnimation != -1 && exitAnimation != -1) {
             activity?.overridePendingTransition(enterAnimation, exitAnimation)
@@ -144,7 +141,7 @@ open class TargetService @Inject constructor() {
 
     @JvmOverloads
     open fun finish(enterAnimation: Int = -1, exitAnimation: Int = -1) {
-        val activity = contextProvider?.activity
+        val activity = contextProvider.activity
         activity?.finish()
         if (enterAnimation != -1 && exitAnimation != -1) {
             activity?.overridePendingTransition(enterAnimation, exitAnimation)
@@ -155,7 +152,7 @@ open class TargetService @Inject constructor() {
     open fun finishWithResult(resultCode: Int, data: Intent? = null,
                               enterAnimation: Int = -1, exitAnimation: Int = -1) {
 
-        val activity = contextProvider?.activity
+        val activity = contextProvider.activity
         if (activity != null) {
             activity.setResult(resultCode, data)
             activity.finish()

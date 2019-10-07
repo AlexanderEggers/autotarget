@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import archknife.context.ContextProvider;
 import autotarget.annotation.ActivityTarget;
 import autotarget.generated.FragmentTargets;
 import autotarget.service.TargetService;
@@ -14,12 +13,12 @@ import autotarget.service.TargetService;
 @ActivityTarget
 public class JavaActivity extends AppCompatActivity {
 
-    private TargetService targetService = new TargetService();
+    private TargetService targetService = new TargetService(ContextProviderSingleton.getContextProvider());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContextProvider.INSTANCE.setActivityContext(this);
+        ContextProviderSingleton.getContextProvider().setActivityContext(this);
 
         setContentView(R.layout.activity_main);
 

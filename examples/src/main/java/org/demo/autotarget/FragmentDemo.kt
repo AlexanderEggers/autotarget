@@ -13,7 +13,7 @@ import autotarget.service.TargetService
 @FragmentTarget(R.id.fragment_container)
 class FragmentDemo : Fragment() {
 
-    private val targetService = TargetService()
+    private val targetService = TargetService(ContextProviderSingleton.contextProvider)
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater.inflate(R.layout.fragment_demo, container, false)
