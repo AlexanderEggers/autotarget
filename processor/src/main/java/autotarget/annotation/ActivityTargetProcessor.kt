@@ -5,7 +5,7 @@ import autotarget.ProcessorUtil.classArrayList
 import autotarget.ProcessorUtil.classList
 import autotarget.ProcessorUtil.classNonNull
 import autotarget.ProcessorUtil.classParameterProvider
-import autotarget.ProcessorUtil.defaultGroupName
+import autotarget.ProcessorUtil.createTargetParameterMap
 import autotarget.ProcessorUtil.populateParamListBody
 import com.squareup.javapoet.*
 import javax.annotation.processing.ProcessingEnvironment
@@ -59,27 +59,13 @@ class ActivityTargetProcessor {
 
     private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { (activityName, packageName) ->
-            val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
-
             val annotationElement: Element = activityAnnotationMap[activityName]!!
             val enterAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).enterAnimation
             val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
 
             val activityClass = ClassName.get(packageName, activityName)
             val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
-            targetParameter?.value?.forEach {
-                it.group.forEach { group ->
-                    val list = parameterMap[group] ?: ArrayList()
-                    list.add(it)
-                    parameterMap[group] = list
-                }
-
-                if(it.required) {
-                    val list = parameterMap[defaultGroupName] ?: ArrayList()
-                    list.add(it)
-                    parameterMap[defaultGroupName] = list
-                }
-            }
+            val parameterMap = createTargetParameterMap(annotationElement)
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
             if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(

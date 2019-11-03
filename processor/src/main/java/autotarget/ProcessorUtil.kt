@@ -1,8 +1,10 @@
 package autotarget
 
+import autotarget.annotation.TargetParameter
 import autotarget.annotation.TargetParameterItem
 import com.squareup.javapoet.*
 import javax.annotation.processing.ProcessingEnvironment
+import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.PrimitiveType
@@ -113,23 +115,46 @@ object ProcessorUtil {
         return paramCount
     }
 
-    val libraryServicePackageName = "autotarget.service"
-    val classActivityTarget: ClassName = ClassName.get(libraryServicePackageName, "ActivityTarget")
-    val classFragmentTarget: ClassName = ClassName.get(libraryServicePackageName, "FragmentTarget")
-    val classParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParameterProvider")
+    fun createTargetParameterMap(annotationElement: Element): HashMap<String, ArrayList<TargetParameterItem>> {
+        val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
+        val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
+
+        targetParameter?.value?.forEach {
+            it.group.forEach { group ->
+                val list = parameterMap[group] ?: ArrayList()
+                list.add(it)
+                parameterMap[group] = list
+            }
+
+            if (it.required) {
+                val list = parameterMap[defaultGroupName] ?: ArrayList()
+                list.add(it)
+                parameterMap[defaultGroupName] = list
+            }
+        }
+
+        return parameterMap
+    }
+
+    const val libraryServicePackageName = "autotarget.service"
+
     val classBundleParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "BundleParameterProvider")
     val classParcelableParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParcelableParameterProvider")
     val classValueParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ValueParameterProvider")
+
+    val classActivityTarget: ClassName = ClassName.get(libraryServicePackageName, "ActivityTarget")
+    val classFragmentTarget: ClassName = ClassName.get(libraryServicePackageName, "FragmentTarget")
+    val classParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParameterProvider")
 
     val classNullable: ClassName = ClassName.get("androidx.annotation", "Nullable")
     val classNonNull: ClassName = ClassName.get("androidx.annotation", "NonNull")
 
     val classBundle: ClassName = ClassName.get("android.os", "Bundle")
-    val classParcelable = "android.os.Parcelable"
+    const val classParcelable = "android.os.Parcelable"
 
     val classString: ClassName = ClassName.get("java.lang", "String")
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
 
-    val defaultGroupName = "default"
+    const val defaultGroupName = "default"
 }

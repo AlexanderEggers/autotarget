@@ -1,11 +1,11 @@
 package autotarget.annotation
 
+import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classArrayList
 import autotarget.ProcessorUtil.classFragmentTarget
 import autotarget.ProcessorUtil.classList
 import autotarget.ProcessorUtil.classNonNull
 import autotarget.ProcessorUtil.classParameterProvider
-import autotarget.ProcessorUtil.defaultGroupName
 import autotarget.ProcessorUtil.populateParamListBody
 import com.squareup.javapoet.*
 import javax.annotation.processing.ProcessingEnvironment
@@ -59,8 +59,6 @@ class FragmentTargetProcessor {
 
     private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
         fragmentsWithPackage.forEach { (fragmentName, packageName) ->
-            val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
-
             val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
             val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
             val containerId = annotationElement.getAnnotation(FragmentTarget::class.java).containerId
@@ -73,19 +71,7 @@ class FragmentTargetProcessor {
 
             val fragmentClass = ClassName.get(packageName, fragmentName)
             val targetParameter = targetParameterMap[fragmentName]?.getAnnotation(TargetParameter::class.java)
-            targetParameter?.value?.forEach {
-                it.group.forEach { group ->
-                    val list = parameterMap[group] ?: ArrayList()
-                    list.add(it)
-                    parameterMap[group] = list
-                }
-
-                if (it.required) {
-                    val list = parameterMap[defaultGroupName] ?: ArrayList()
-                    list.add(it)
-                    parameterMap[defaultGroupName] = list
-                }
-            }
+            val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
 
             val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
             if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(

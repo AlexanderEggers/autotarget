@@ -55,7 +55,8 @@ abstract class BundleModelProcessor {
                     .writeTo(processingEnv.filer)
 
             bundleModelMap[className] = ClassName.get(
-                    "autotarget.generated", "${className}BundleModel")
+                    "autotarget.generated",
+                    "${className}BundleModel")
         }
 
         return bundleModelMap
