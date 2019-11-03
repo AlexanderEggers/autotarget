@@ -3,11 +3,12 @@ package autotarget.annotation
 import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classArrayList
 import autotarget.ProcessorUtil.classFragmentTarget
-import autotarget.ProcessorUtil.classList
 import autotarget.ProcessorUtil.classNonNull
-import autotarget.ProcessorUtil.classParameterProvider
 import autotarget.ProcessorUtil.populateParamListBody
-import com.squareup.javapoet.*
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeSpec
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -16,9 +17,6 @@ import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
 class FragmentTargetProcessor {
-
-    private val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
-    private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val fragmentsWithPackage: HashMap<String, String> = HashMap()
     private var targetParameterMap: HashMap<String, Element> = HashMap()
@@ -70,47 +68,27 @@ class FragmentTargetProcessor {
             val popExitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).popExitAnimation
 
             val fragmentClass = ClassName.get(packageName, fragmentName)
-            val targetParameter = targetParameterMap[fragmentName]?.getAnnotation(TargetParameter::class.java)
             val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
 
-            val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
-                    fragmentClass, fragmentName, state, containerId, tag, enterAnimation,
-                    exitAnimation, popEnterAnimation, popExitAnimation, fileBuilder)
-
             parameterMap.keys.forEach {
-                val parameterItems = parameterMap[it]
-                if (parameterItems?.isNotEmpty() == true) {
-                    val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${fragmentName}For${it.capitalize()}")
-                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                            .addAnnotation(classNonNull)
-                            .returns(classFragmentTarget)
-                            .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+                val parameterItems = parameterMap[it] ?: ArrayList()
 
-                    populateParamListBody(processingEnv, parameterItems, methodBuilderWithOptionals)
-                    methodBuilderWithOptionals.addStatement("return new $classFragmentTarget(" +
-                            "new $fragmentClass(), $state, $containerId, \"$tag\", $enterAnimation, " +
-                            "$exitAnimation, $popEnterAnimation, $popExitAnimation, parameterList)")
-                    fileBuilder.addMethod(methodBuilderWithOptionals.build())
-                }
+                val methodName = if (it == ProcessorUtil.libraryDefaultGroupKey
+                        || it == ProcessorUtil.libraryOptionalGroupKey) "show${fragmentName}"
+                else "show${fragmentName}For${it.capitalize()}"
+
+                val methodBuilder = MethodSpec.methodBuilder(methodName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addAnnotation(classNonNull)
+                        .returns(classFragmentTarget)
+                        .addStatement("${ProcessorUtil.listOfParameterProvider} parameterList = new $classArrayList<>()")
+
+                populateParamListBody(processingEnv, parameterItems, methodBuilder)
+                methodBuilder.addStatement("return new $classFragmentTarget(" +
+                        "new $fragmentClass(), $state, $containerId, \"$tag\", $enterAnimation, " +
+                        "$exitAnimation, $popEnterAnimation, $popExitAnimation, parameterList)")
+                fileBuilder.addMethod(methodBuilder.build())
             }
         }
-    }
-
-    private fun createDefaultTargetMethod(fragmentClass: ClassName, fragmentName: String, state: Int,
-                                          containerId: Int, tag: String, enterAnimation: Int,
-                                          exitAnimation: Int, popEnterAnimation: Int,
-                                          popExitAnimation: Int, fileBuilder: TypeSpec.Builder) {
-
-        val methodBuilderBase = MethodSpec.methodBuilder("show$fragmentName")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addAnnotation(classNonNull)
-                .returns(classFragmentTarget)
-                .addStatement("return new $classFragmentTarget(" +
-                        "new $fragmentClass(), $state, $containerId, \"$tag\", $enterAnimation, " +
-                        "$exitAnimation, $popEnterAnimation, $popExitAnimation, " +
-                        "new $arrayListOfParameterProvider())")
-
-        fileBuilder.addMethod(methodBuilderBase.build())
     }
 }

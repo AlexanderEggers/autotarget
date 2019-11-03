@@ -3,12 +3,12 @@ package autotarget.annotation
 import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classActivityTarget
 import autotarget.ProcessorUtil.classArrayList
-import autotarget.ProcessorUtil.classList
 import autotarget.ProcessorUtil.classNonNull
-import autotarget.ProcessorUtil.classParameterProvider
-import autotarget.ProcessorUtil.createTargetParameterMap
 import autotarget.ProcessorUtil.populateParamListBody
-import com.squareup.javapoet.*
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeSpec
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
@@ -17,9 +17,6 @@ import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
 
 class ActivityTargetProcessor {
-
-    private val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
-    private val arrayListOfParameterProvider = ParameterizedTypeName.get(classArrayList, classParameterProvider)
 
     private val activitiesWithPackage: HashMap<String, String> = HashMap()
     private var targetParameterMap: HashMap<String, Element> = HashMap()
@@ -65,41 +62,26 @@ class ActivityTargetProcessor {
             val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
 
             val activityClass = ClassName.get(packageName, activityName)
-            val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
-            val parameterMap = createTargetParameterMap(annotationElement)
-
-            val forceEmptyTargetMethod = targetParameter?.forceEmptyTargetMethod ?: false
-            if (forceEmptyTargetMethod || parameterMap.isEmpty()) createDefaultTargetMethod(
-                    activityClass, activityName, enterAnimation, exitAnimation, fileBuilder)
+            val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
 
             parameterMap.keys.forEach {
-                val parameterItems = parameterMap[it]
-                if (parameterItems?.isNotEmpty() == true) {
-                    val methodBuilderWithOptionals = MethodSpec.methodBuilder("show${activityName}For${it.capitalize()}")
-                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                            .addAnnotation(classNonNull)
-                            .returns(classActivityTarget)
-                            .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
+                val parameterItems = parameterMap[it] ?: ArrayList()
 
-                    populateParamListBody(processingEnv, parameterItems, methodBuilderWithOptionals)
-                    methodBuilderWithOptionals.addStatement("return new $classActivityTarget(" +
-                            "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
-                    fileBuilder.addMethod(methodBuilderWithOptionals.build())
-                }
+                val methodName = if (it == ProcessorUtil.libraryDefaultGroupKey
+                        || it == ProcessorUtil.libraryOptionalGroupKey) "show${activityName}"
+                else "show${activityName}For${it.capitalize()}"
+
+                val methodBuilder = MethodSpec.methodBuilder(methodName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .addAnnotation(classNonNull)
+                        .returns(classActivityTarget)
+                        .addStatement("${ProcessorUtil.listOfParameterProvider} parameterList = new $classArrayList<>()")
+
+                populateParamListBody(processingEnv, parameterItems, methodBuilder)
+                methodBuilder.addStatement("return new $classActivityTarget(" +
+                        "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
+                fileBuilder.addMethod(methodBuilder.build())
             }
         }
-    }
-
-    private fun createDefaultTargetMethod(activityClass: ClassName, activityName: String,
-                                          enterAnimation: Int, exitAnimation: Int, fileBuilder: TypeSpec.Builder) {
-
-        val methodBuilderBase = MethodSpec.methodBuilder("show$activityName")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .addAnnotation(classNonNull)
-                .returns(classActivityTarget)
-                .addStatement("return new $classActivityTarget($activityClass.class, $enterAnimation, " +
-                        "$exitAnimation, new $arrayListOfParameterProvider())")
-
-        fileBuilder.addMethod(methodBuilderBase.build())
     }
 }

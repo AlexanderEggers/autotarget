@@ -25,7 +25,7 @@ abstract class BundleProviderProcessor {
                     .addAnnotation(classNonNull)
                     .returns(modelClassName)
                     .addParameter(ParameterSpec.builder(classBundle, "bundle")
-                            .addAnnotation(classNullable)
+                            .addAnnotation(classNonNull)
                             .build())
                     .addStatement("return new $modelClassName(bundle)")
                     .build())

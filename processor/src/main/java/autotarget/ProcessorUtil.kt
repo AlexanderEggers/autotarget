@@ -21,12 +21,16 @@ object ProcessorUtil {
         return null
     }
 
-    private fun isParcelableObject(processingEnv: ProcessingEnvironment, typeMirror: TypeMirror?): Boolean {
+    private fun isParcelableObject(processingEnv: ProcessingEnvironment,
+                                   typeMirror: TypeMirror?): Boolean {
+
         return processingEnv.typeUtils.isAssignable(typeMirror,
                 processingEnv.elementUtils.getTypeElement(classParcelable).asType())
     }
 
-    fun populateParamListBody(processingEnv: ProcessingEnvironment, list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
+    fun populateParamListBody(processingEnv: ProcessingEnvironment,
+                              list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
+
         var paramCount = 0
 
         list.forEach {
@@ -35,14 +39,16 @@ object ProcessorUtil {
             val typeMirror = getValueType(it)
             val valueType = ClassName.get(typeMirror)
 
-            if (valueName == "unspecified") {
+            if (valueName.isBlank()) {
                 valueName = "param$paramCount"
                 paramCount++
             }
 
             val parameterBuilder = ParameterSpec.builder(valueType, valueName)
-            if (typeMirror !is PrimitiveType) {
+            if (typeMirror !is PrimitiveType && !it.required) {
                 parameterBuilder.addAnnotation(classNullable)
+            } else if (typeMirror !is PrimitiveType && it.required) {
+                parameterBuilder.addAnnotation(classNonNull)
             }
 
             builder.addParameter(parameterBuilder.build())
@@ -63,15 +69,17 @@ object ProcessorUtil {
         return paramCount
     }
 
-    fun populateBundleModel(processingEnv: ProcessingEnvironment, list: ArrayList<TargetParameterItem>, builder: TypeSpec.Builder): Int {
+    fun populateBundleModel(processingEnv: ProcessingEnvironment,
+                            list: ArrayList<TargetParameterItem>, builder: TypeSpec.Builder): Int {
+
         var paramCount = 0
 
         val constructorBuilder = MethodSpec.constructorBuilder()
                 .addParameter(ParameterSpec.builder(classBundle, "bundle")
-                        .addAnnotation(classNullable)
+                        .addAnnotation(classNonNull)
                         .build()
                 )
-                .addStatement("if(bundle == null) return")
+                .addStatement("if(bundle == null) throw new $classRuntimeException(\"Bundle cannot be null.\")")
                 .addCode("\n")
 
         list.forEach {
@@ -79,7 +87,7 @@ object ProcessorUtil {
             val typeMirror = getValueType(it)
             val valueType = ClassName.get(typeMirror)
 
-            if (valueName == "unspecified") {
+            if (valueName.isBlank()) {
                 valueName = "param$paramCount"
                 paramCount++
             }
@@ -106,7 +114,12 @@ object ProcessorUtil {
                     .returns(valueType)
                     .addStatement("return $valueName")
 
-            if (typeMirror !is PrimitiveType) valueGetter.addAnnotation(classNullable)
+            if (typeMirror !is PrimitiveType && !it.required) {
+                valueGetter.addAnnotation(classNullable)
+            } else if (typeMirror !is PrimitiveType && it.required) {
+                valueGetter.addAnnotation(classNonNull)
+            }
+
             builder.addMethod(valueGetter.build())
         }
 
@@ -117,28 +130,65 @@ object ProcessorUtil {
 
     fun createTargetParameterMap(annotationElement: Element): HashMap<String, ArrayList<TargetParameterItem>> {
         val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
+        addRequiredParameters(annotationElement, parameterMap)
+        addGroupSpecificTargetParameters(annotationElement, parameterMap)
+        return parameterMap
+    }
+
+    private fun addRequiredParameters(annotationElement: Element,
+                                      parameterMap: HashMap<String, ArrayList<TargetParameterItem>>) {
+
         val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
+        parameterMap[libraryDefaultGroupKey] = ArrayList()
 
         targetParameter?.value?.forEach {
-            it.group.forEach { group ->
-                val list = parameterMap[group] ?: ArrayList()
-                list.add(it)
-                parameterMap[group] = list
-            }
+            if (it.required) addTargetParameterToGroup(parameterMap, it, libraryDefaultGroupKey)
+        }
+    }
 
-            if (it.required) {
-                val list = parameterMap[libraryDefaultGroupName] ?: ArrayList()
-                list.add(it)
-                parameterMap[libraryDefaultGroupName] = list
+    private fun addGroupSpecificTargetParameters(annotationElement: Element,
+                                                 parameterMap: HashMap<String, ArrayList<TargetParameterItem>>) {
+
+        val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
+        targetParameter?.value?.forEach {
+            if(!it.required) {
+                it.group.forEach { group ->
+                    addTargetParameterToGroup(parameterMap, it, group)
+                }
+
+                //Ensures that optional parameters are at least at added to an optional group
+                addTargetParameterToGroup(parameterMap, it, libraryOptionalGroupKey)
             }
         }
+    }
 
-        return parameterMap
+    private fun addTargetParameterToGroup(parameterMap: HashMap<String, ArrayList<TargetParameterItem>>,
+                                          item: TargetParameterItem,
+                                          groupId: String) {
+
+        val list = parameterMap[groupId] ?: run {
+            val defaultList = parameterMap[libraryDefaultGroupKey] ?: ArrayList()
+            ArrayList(defaultList)
+        }
+        list.add(item)
+        parameterMap[groupId] = list
     }
 
     const val libraryServicePackageName = "autotarget.service"
     const val libraryGeneratedPackageName = "autotarget.generated"
-    const val libraryDefaultGroupName = "default"
+    const val libraryDefaultGroupKey = "__&&default&&__" //ensures that the default group key stays unique
+    const val libraryOptionalGroupKey = "__&&optional&&__"
+
+    val classString: ClassName = ClassName.get("java.lang", "String")
+    val classRuntimeException: ClassName = ClassName.get("java.lang", "RuntimeException")
+    val classList: ClassName = ClassName.get("java.util", "List")
+    val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
+
+    val classNullable: ClassName = ClassName.get("androidx.annotation", "Nullable")
+    val classNonNull: ClassName = ClassName.get("androidx.annotation", "NonNull")
+
+    val classBundle: ClassName = ClassName.get("android.os", "Bundle")
+    const val classParcelable = "android.os.Parcelable"
 
     val classBundleParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "BundleParameterProvider")
     val classParcelableParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParcelableParameterProvider")
@@ -147,14 +197,5 @@ object ProcessorUtil {
     val classActivityTarget: ClassName = ClassName.get(libraryServicePackageName, "ActivityTarget")
     val classFragmentTarget: ClassName = ClassName.get(libraryServicePackageName, "FragmentTarget")
     val classParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParameterProvider")
-
-    val classNullable: ClassName = ClassName.get("androidx.annotation", "Nullable")
-    val classNonNull: ClassName = ClassName.get("androidx.annotation", "NonNull")
-
-    val classBundle: ClassName = ClassName.get("android.os", "Bundle")
-    const val classParcelable = "android.os.Parcelable"
-
-    val classString: ClassName = ClassName.get("java.lang", "String")
-    val classList: ClassName = ClassName.get("java.util", "List")
-    val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
+    val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
 }

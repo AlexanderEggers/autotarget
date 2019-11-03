@@ -20,7 +20,7 @@ class FragmentDemo : Fragment() {
 
         val button = view.findViewById<Button>(R.id.fragment_button)
         button.setOnClickListener {
-            targetService.execute(ActivityTargets.showNextActivityForDefault("Test successful!"))
+            targetService.execute(ActivityTargets.showNextActivity("Test successful!"))
         }
 
         return view

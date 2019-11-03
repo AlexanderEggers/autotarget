@@ -13,7 +13,7 @@ import org.demo.autotarget.NextActivity.Companion.MY_KEY
 @TargetParameter([
     TargetParameterItem(key = MY_KEY, type = String::class, name = "text", required = true),
     TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", group = ["test"], required = false)
-], true)
+])
 class NextActivity : AppCompatActivity() {
 
     companion object {
@@ -26,7 +26,7 @@ class NextActivity : AppCompatActivity() {
 
         val textView = findViewById<TextView>(R.id.textView)
 
-        val model = ActivityBundles.getNextActivityBundleModel(intent.extras)
+        val model = ActivityBundles.getNextActivityBundleModel(intent.extras!!)
         textView.text = model.text
     }
 }
