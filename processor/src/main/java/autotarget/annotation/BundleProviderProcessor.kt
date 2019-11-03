@@ -1,5 +1,6 @@
 package autotarget.annotation
 
+import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classBundle
 import autotarget.ProcessorUtil.classNonNull
 import autotarget.ProcessorUtil.classNullable
@@ -31,7 +32,7 @@ abstract class BundleProviderProcessor {
         }
 
         val file = fileBuilder.build()
-        JavaFile.builder("autotarget.generated", file)
+        JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
                 .build()
                 .writeTo(processingEnv.filer)
     }

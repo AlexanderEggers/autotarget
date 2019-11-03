@@ -1,5 +1,6 @@
 package autotarget.annotation
 
+import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.populateBundleModel
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
@@ -50,12 +51,12 @@ abstract class BundleModelProcessor {
             populateBundleModel(processingEnv, parameterList, fileBuilder)
 
             val file = fileBuilder.build()
-            JavaFile.builder("autotarget.generated", file)
+            JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
                     .build()
                     .writeTo(processingEnv.filer)
 
             bundleModelMap[className] = ClassName.get(
-                    "autotarget.generated",
+                    ProcessorUtil.libraryGeneratedPackageName,
                     "${className}BundleModel")
         }
 

@@ -127,9 +127,9 @@ object ProcessorUtil {
             }
 
             if (it.required) {
-                val list = parameterMap[defaultGroupName] ?: ArrayList()
+                val list = parameterMap[libraryDefaultGroupName] ?: ArrayList()
                 list.add(it)
-                parameterMap[defaultGroupName] = list
+                parameterMap[libraryDefaultGroupName] = list
             }
         }
 
@@ -137,6 +137,8 @@ object ProcessorUtil {
     }
 
     const val libraryServicePackageName = "autotarget.service"
+    const val libraryGeneratedPackageName = "autotarget.generated"
+    const val libraryDefaultGroupName = "default"
 
     val classBundleParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "BundleParameterProvider")
     val classParcelableParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParcelableParameterProvider")
@@ -155,6 +157,4 @@ object ProcessorUtil {
     val classString: ClassName = ClassName.get("java.lang", "String")
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
-
-    const val defaultGroupName = "default"
 }

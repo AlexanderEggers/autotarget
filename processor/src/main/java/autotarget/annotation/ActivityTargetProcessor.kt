@@ -1,5 +1,6 @@
 package autotarget.annotation
 
+import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classActivityTarget
 import autotarget.ProcessorUtil.classArrayList
 import autotarget.ProcessorUtil.classList
@@ -37,7 +38,7 @@ class ActivityTargetProcessor {
         createMethods(processingEnv, fileBuilder)
 
         val file = fileBuilder.build()
-        JavaFile.builder("autotarget.generated", file)
+        JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
                 .build()
                 .writeTo(processingEnv.filer)
     }

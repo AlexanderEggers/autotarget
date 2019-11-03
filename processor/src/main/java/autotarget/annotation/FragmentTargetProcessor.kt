@@ -37,7 +37,7 @@ class FragmentTargetProcessor {
         createMethods(processingEnv, fileBuilder)
 
         val file = fileBuilder.build()
-        JavaFile.builder("autotarget.generated", file)
+        JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
                 .build()
                 .writeTo(processingEnv.filer)
     }
