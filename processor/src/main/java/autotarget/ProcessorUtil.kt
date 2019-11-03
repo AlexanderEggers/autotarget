@@ -2,6 +2,7 @@ package autotarget
 
 import autotarget.annotation.TargetParameterItem
 import com.squareup.javapoet.*
+import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.PrimitiveType
@@ -18,7 +19,12 @@ object ProcessorUtil {
         return null
     }
 
-    fun populateParamListBody(list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
+    private fun isParcelableObject(processingEnv: ProcessingEnvironment, typeMirror: TypeMirror?): Boolean {
+        return processingEnv.typeUtils.isAssignable(typeMirror,
+                processingEnv.elementUtils.getTypeElement(classParcelable).asType())
+    }
+
+    fun populateParamListBody(processingEnv: ProcessingEnvironment, list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
         var paramCount = 0
 
         list.forEach {
@@ -39,17 +45,23 @@ object ProcessorUtil {
 
             builder.addParameter(parameterBuilder.build())
 
-            when (valueType) {
-                classBundle -> builder.addStatement("parameterList.add(new $classBundleParameterProvider(\"$valueKey\", $valueName))")
-                classParcelable -> builder.addStatement("parameterList.add(new $classParcelableParameterProvider(\"$valueKey\", $valueName))")
-                else -> builder.addStatement("parameterList.add(new $classValueParameterProvider(\"$valueKey\", $valueName))")
+            when {
+                valueType == classBundle -> {
+                    builder.addStatement("parameterList.add(new $classBundleParameterProvider(\"$valueKey\", $valueName))")
+                }
+                isParcelableObject(processingEnv, typeMirror) -> {
+                    builder.addStatement("parameterList.add(new $classParcelableParameterProvider(\"$valueKey\", $valueName))")
+                }
+                else -> {
+                    builder.addStatement("parameterList.add(new $classValueParameterProvider(\"$valueKey\", $valueName))")
+                }
             }
         }
 
         return paramCount
     }
 
-    fun populateBundleModel(list: ArrayList<TargetParameterItem>, builder: TypeSpec.Builder): Int {
+    fun populateBundleModel(processingEnv: ProcessingEnvironment, list: ArrayList<TargetParameterItem>, builder: TypeSpec.Builder): Int {
         var paramCount = 0
 
         val constructorBuilder = MethodSpec.constructorBuilder()
@@ -73,17 +85,17 @@ object ProcessorUtil {
             val fieldBuilder = FieldSpec.builder(valueType, valueName, Modifier.PRIVATE)
             builder.addField(fieldBuilder.build())
 
-            when (valueType) {
-                classBundle -> constructorBuilder.addStatement("$valueName = bundle.getBundle(\"${it.key}\")")
-                classParcelable -> constructorBuilder.addStatement("$valueName = bundle.getParcelable(\"${it.key}\")")
-                ClassName.INT -> constructorBuilder.addStatement("$valueName = bundle.getInt(\"${it.key}\")")
-                ClassName.CHAR -> constructorBuilder.addStatement("$valueName = bundle.getChar(\"${it.key}\")")
-                ClassName.BYTE -> constructorBuilder.addStatement("$valueName = bundle.getByte(\"${it.key}\")")
-                ClassName.BOOLEAN -> constructorBuilder.addStatement("$valueName = bundle.getBoolean(\"${it.key}\")")
-                ClassName.LONG -> constructorBuilder.addStatement("$valueName = bundle.getLong(\"${it.key}\")")
-                ClassName.DOUBLE -> constructorBuilder.addStatement("$valueName = bundle.getDouble(\"${it.key}\")")
-                ClassName.FLOAT -> constructorBuilder.addStatement("$valueName = bundle.getFloat(\"${it.key}\")")
-                classString -> constructorBuilder.addStatement("$valueName = bundle.getString(\"${it.key}\")")
+            when {
+                valueType == classBundle -> constructorBuilder.addStatement("$valueName = bundle.getBundle(\"${it.key}\")")
+                isParcelableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = bundle.getParcelable(\"${it.key}\")")
+                valueType == ClassName.INT -> constructorBuilder.addStatement("$valueName = bundle.getInt(\"${it.key}\")")
+                valueType == ClassName.CHAR -> constructorBuilder.addStatement("$valueName = bundle.getChar(\"${it.key}\")")
+                valueType == ClassName.BYTE -> constructorBuilder.addStatement("$valueName = bundle.getByte(\"${it.key}\")")
+                valueType == ClassName.BOOLEAN -> constructorBuilder.addStatement("$valueName = bundle.getBoolean(\"${it.key}\")")
+                valueType == ClassName.LONG -> constructorBuilder.addStatement("$valueName = bundle.getLong(\"${it.key}\")")
+                valueType == ClassName.DOUBLE -> constructorBuilder.addStatement("$valueName = bundle.getDouble(\"${it.key}\")")
+                valueType == ClassName.FLOAT -> constructorBuilder.addStatement("$valueName = bundle.getFloat(\"${it.key}\")")
+                valueType == classString -> constructorBuilder.addStatement("$valueName = bundle.getString(\"${it.key}\")")
                 else -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
             }
 
@@ -92,7 +104,7 @@ object ProcessorUtil {
                     .returns(valueType)
                     .addStatement("return $valueName")
 
-            if(typeMirror !is PrimitiveType) valueGetter.addAnnotation(classNullable)
+            if (typeMirror !is PrimitiveType) valueGetter.addAnnotation(classNullable)
             builder.addMethod(valueGetter.build())
         }
 
@@ -101,21 +113,23 @@ object ProcessorUtil {
         return paramCount
     }
 
+    val libraryServicePackageName = "autotarget.service"
+    val classActivityTarget: ClassName = ClassName.get(libraryServicePackageName, "ActivityTarget")
+    val classFragmentTarget: ClassName = ClassName.get(libraryServicePackageName, "FragmentTarget")
+    val classParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParameterProvider")
+    val classBundleParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "BundleParameterProvider")
+    val classParcelableParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParcelableParameterProvider")
+    val classValueParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ValueParameterProvider")
+
     val classNullable: ClassName = ClassName.get("androidx.annotation", "Nullable")
     val classNonNull: ClassName = ClassName.get("androidx.annotation", "NonNull")
 
-    val classActivityTarget: ClassName = ClassName.get("autotarget.service", "ActivityTarget")
-    val classFragmentTarget: ClassName = ClassName.get("autotarget.service", "FragmentTarget")
-
-    val classParameterProvider: ClassName = ClassName.get("autotarget.service", "ParameterProvider")
-    val classBundleParameterProvider: ClassName = ClassName.get("autotarget.service", "BundleParameterProvider")
-    val classParcelableParameterProvider: ClassName = ClassName.get("autotarget.service", "ParcelableParameterProvider")
-    val classValueParameterProvider: ClassName = ClassName.get("autotarget.service", "ValueParameterProvider")
-
     val classBundle: ClassName = ClassName.get("android.os", "Bundle")
-    val classParcelable: ClassName = ClassName.get("android.os", "Parcelable")
-    val classString: ClassName = ClassName.get("java.lang", "String")
+    val classParcelable = "android.os.Parcelable"
 
+    val classString: ClassName = ClassName.get("java.lang", "String")
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
+
+    val defaultGroupName = "default"
 }

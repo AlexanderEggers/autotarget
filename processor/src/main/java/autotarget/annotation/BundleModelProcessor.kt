@@ -1,10 +1,10 @@
 package autotarget.annotation
 
-import autotarget.MainProcessor
 import autotarget.ProcessorUtil.populateBundleModel
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
+import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
@@ -13,17 +13,17 @@ import javax.tools.Diagnostic
 
 abstract class BundleModelProcessor {
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment): HashMap<String, ClassName> {
-        val annotationMap = preparePackageMap(mainProcessor, roundEnv)
-        return createClasses(mainProcessor, annotationMap)
+    fun process(processingEnv: ProcessingEnvironment, roundEnv: RoundEnvironment): HashMap<String, ClassName> {
+        val annotationMap = preparePackageMap(processingEnv, roundEnv)
+        return createClasses(processingEnv, annotationMap)
     }
 
-    private fun preparePackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment): HashMap<String, Element> {
+    private fun preparePackageMap(processingEnv: ProcessingEnvironment, roundEnv: RoundEnvironment): HashMap<String, Element> {
         val annotationMap = HashMap<String, Element>()
 
         for (it in roundEnv.getElementsAnnotatedWith(getElementAnnotationClass())) {
             if (!it.kind.isClass) {
-                mainProcessor.messager.printMessage(Diagnostic.Kind.ERROR,
+                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR,
                         "Can only be applied to a class. Error for ${it.simpleName}")
                 continue
             }
@@ -35,7 +35,7 @@ abstract class BundleModelProcessor {
         return annotationMap
     }
 
-    private fun createClasses(mainProcessor: MainProcessor, annotationMap: HashMap<String, Element>): HashMap<String, ClassName> {
+    private fun createClasses(processingEnv: ProcessingEnvironment, annotationMap: HashMap<String, Element>): HashMap<String, ClassName> {
         val bundleModelMap = HashMap<String, ClassName>()
 
         annotationMap.forEach { (className, annotationElement) ->
@@ -47,12 +47,12 @@ abstract class BundleModelProcessor {
             val fileBuilder = TypeSpec.classBuilder("${className}BundleModel")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
-            populateBundleModel(parameterList, fileBuilder)
+            populateBundleModel(processingEnv, parameterList, fileBuilder)
 
             val file = fileBuilder.build()
             JavaFile.builder("autotarget.generated", file)
                     .build()
-                    .writeTo(mainProcessor.filer)
+                    .writeTo(processingEnv.filer)
 
             bundleModelMap[className] = ClassName.get(
                     "autotarget.generated", "${className}BundleModel")

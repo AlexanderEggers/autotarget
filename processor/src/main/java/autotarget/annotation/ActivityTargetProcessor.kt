@@ -1,13 +1,14 @@
 package autotarget.annotation
 
-import autotarget.MainProcessor
 import autotarget.ProcessorUtil.classActivityTarget
 import autotarget.ProcessorUtil.classArrayList
 import autotarget.ProcessorUtil.classList
 import autotarget.ProcessorUtil.classNonNull
 import autotarget.ProcessorUtil.classParameterProvider
+import autotarget.ProcessorUtil.defaultGroupName
 import autotarget.ProcessorUtil.populateParamListBody
 import com.squareup.javapoet.*
+import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
@@ -23,7 +24,8 @@ class ActivityTargetProcessor {
     private var targetParameterMap: HashMap<String, Element> = HashMap()
     private var activityAnnotationMap: HashMap<String, Element> = HashMap()
 
-    fun process(mainProcessor: MainProcessor, roundEnv: RoundEnvironment,
+    fun process(processingEnv: ProcessingEnvironment,
+                roundEnv: RoundEnvironment,
                 targetParameterMap: HashMap<String, Element>) {
 
         this.targetParameterMap = targetParameterMap
@@ -31,31 +33,31 @@ class ActivityTargetProcessor {
         val fileBuilder = TypeSpec.classBuilder("ActivityTargets")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
-        preparePackageMap(mainProcessor, roundEnv)
-        createMethods(fileBuilder)
+        preparePackageMap(processingEnv, roundEnv)
+        createMethods(processingEnv, fileBuilder)
 
         val file = fileBuilder.build()
         JavaFile.builder("autotarget.generated", file)
                 .build()
-                .writeTo(mainProcessor.filer)
+                .writeTo(processingEnv.filer)
     }
 
-    private fun preparePackageMap(mainProcessor: MainProcessor, roundEnv: RoundEnvironment) {
+    private fun preparePackageMap(processingEnv: ProcessingEnvironment, roundEnv: RoundEnvironment) {
         for (it in roundEnv.getElementsAnnotatedWith(ActivityTarget::class.java)) {
             if (!it.kind.isClass) {
-                mainProcessor.messager.printMessage(Diagnostic.Kind.ERROR,
+                processingEnv.messager.printMessage(Diagnostic.Kind.ERROR,
                         "Can only be applied to a class. Error for ${it.simpleName}")
                 continue
             }
 
             val typeElement = it as TypeElement
             activitiesWithPackage[typeElement.simpleName.toString()] =
-                    mainProcessor.elements.getPackageOf(typeElement).qualifiedName.toString()
+                    processingEnv.elementUtils.getPackageOf(typeElement).qualifiedName.toString()
             activityAnnotationMap[typeElement.simpleName.toString()] = it
         }
     }
 
-    private fun createMethods(fileBuilder: TypeSpec.Builder) {
+    private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
         activitiesWithPackage.forEach { (activityName, packageName) ->
             val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
 
@@ -70,6 +72,12 @@ class ActivityTargetProcessor {
                     val list = parameterMap[group] ?: ArrayList()
                     list.add(it)
                     parameterMap[group] = list
+                }
+
+                if(it.required) {
+                    val list = parameterMap[defaultGroupName] ?: ArrayList()
+                    list.add(it)
+                    parameterMap[defaultGroupName] = list
                 }
             }
 
@@ -86,7 +94,7 @@ class ActivityTargetProcessor {
                             .returns(classActivityTarget)
                             .addStatement("$listOfParameterProvider parameterList = new $classArrayList<>()")
 
-                    populateParamListBody(parameterItems, methodBuilderWithOptionals)
+                    populateParamListBody(processingEnv, parameterItems, methodBuilderWithOptionals)
                     methodBuilderWithOptionals.addStatement("return new $classActivityTarget(" +
                             "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
                     fileBuilder.addMethod(methodBuilderWithOptionals.build())

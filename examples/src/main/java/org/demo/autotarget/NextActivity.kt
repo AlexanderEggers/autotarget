@@ -1,18 +1,19 @@
 package org.demo.autotarget
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import autotarget.annotation.ActivityTarget
 import autotarget.annotation.TargetParameter
 import autotarget.annotation.TargetParameterItem
-import autotarget.annotation.TargetParameterItem.Companion.DEFAULT_GROUP_KEY
 import autotarget.generated.ActivityBundles
 import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
-@TargetParameter([TargetParameterItem(key = MY_KEY, type = String::class, name = "text", group = [DEFAULT_GROUP_KEY]),
-    TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", group = ["test"])], true)
+@TargetParameter([
+    TargetParameterItem(key = MY_KEY, type = String::class, name = "text", required = true),
+    TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", group = ["test"], required = false)
+], true)
 class NextActivity : AppCompatActivity() {
 
     companion object {

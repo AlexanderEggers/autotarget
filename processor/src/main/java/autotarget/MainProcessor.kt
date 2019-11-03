@@ -5,39 +5,28 @@ import com.google.auto.service.AutoService
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessor
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessorType
 import java.io.IOException
-import javax.annotation.processing.*
+import javax.annotation.processing.AbstractProcessor
+import javax.annotation.processing.Processor
+import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.lang.model.util.Elements
 
 @AutoService(Processor::class)
 @IncrementalAnnotationProcessor(IncrementalAnnotationProcessorType.ISOLATING)
 class MainProcessor : AbstractProcessor() {
 
-    lateinit var filer: Filer
-    lateinit var messager: Messager
-    lateinit var elements: Elements
-
-    @Synchronized
-    override fun init(processingEnvironment: ProcessingEnvironment) {
-        super.init(processingEnvironment)
-        filer = processingEnvironment.filer
-        messager = processingEnvironment.messager
-        elements = processingEnvironment.elementUtils
-    }
-
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         try {
             //Annotation processor part - like for the annotation @ActivityTarget
-            val targetParameterMap = TargetParameterProcessor().process(this, roundEnv)
+            val targetParameterMap = TargetParameterProcessor().process(processingEnv, roundEnv)
 
-            ActivityTargetProcessor().process(this, roundEnv, targetParameterMap)
-            val activityBundleClasses = ActivityBundleModelProcessor().process(this, roundEnv)
-            ActivityBundleProviderProcessor().process(this, activityBundleClasses)
+            ActivityTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
+            val activityBundleClasses = ActivityBundleModelProcessor().process(processingEnv, roundEnv)
+            ActivityBundleProviderProcessor().process(processingEnv, activityBundleClasses)
 
-            FragmentTargetProcessor().process(this, roundEnv, targetParameterMap)
-            val fragmentBundleClasses = FragmentBundleModelProcessor().process(this, roundEnv)
-            FragmentBundleProviderProcessor().process(this, fragmentBundleClasses)
+            FragmentTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
+            val fragmentBundleClasses = FragmentBundleModelProcessor().process(processingEnv, roundEnv)
+            FragmentBundleProviderProcessor().process(processingEnv, fragmentBundleClasses)
         } catch (e: IOException) {
             e.printStackTrace()
         }

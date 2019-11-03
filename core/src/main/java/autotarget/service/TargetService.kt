@@ -9,8 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import archknife.context.ContextProvider
-import archtree.FragmentDispatcher
-import autotarget.util.AutoTargetFragmentDispatcher
+import autotarget.util.FragmentDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,13 +48,8 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         } else {
             var check = false
             if (context != null && context is FragmentDispatcher && target.state != -1) {
-                check = context.showFragment(containerId, target.state, bundle)
+                check = context.showFragment(target, containerId, target.state, bundle)
             }
-
-            if (!check && context != null && context is AutoTargetFragmentDispatcher && target.state != -1) {
-                check = context.onShowNextFragment(target, target.state, containerId, bundle)
-            }
-
             if (!check && context != null && context is FragmentActivity) {
                 showFragmentAsDefault(target, containerId, bundle, context)
             }

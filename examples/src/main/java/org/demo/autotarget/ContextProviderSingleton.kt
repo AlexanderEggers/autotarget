@@ -3,8 +3,8 @@ package org.demo.autotarget
 import archknife.context.ContextProvider
 
 class ContextProviderSingleton {
-     companion object {
 
+    companion object {
          @JvmStatic
          val contextProvider: ContextProvider = ContextProvider()
      }
