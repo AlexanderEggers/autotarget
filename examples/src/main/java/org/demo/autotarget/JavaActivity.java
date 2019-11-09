@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import autotarget.annotation.ActivityTarget;
 import autotarget.generated.FragmentTargets;
-import autotarget.service.TargetService;
+import autotarget.target.TargetService;
 
 @ActivityTarget
 public class JavaActivity extends AppCompatActivity {

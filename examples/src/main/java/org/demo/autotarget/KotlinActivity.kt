@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import autotarget.annotation.ActivityTarget
 import autotarget.generated.ActivityTargets
-import autotarget.service.TargetService
+import autotarget.target.TargetService
 
 @ActivityTarget
 class KotlinActivity : AppCompatActivity() {

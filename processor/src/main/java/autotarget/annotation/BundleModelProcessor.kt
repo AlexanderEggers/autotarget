@@ -41,26 +41,48 @@ abstract class BundleModelProcessor {
 
         annotationMap.forEach { (className, annotationElement) ->
             val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
+            val parameterMap = HashMap<String, ArrayList<TargetParameterItem>>()
+            targetParameter?.value?.forEach { parameterItem ->
+                parameterItem.group.forEach { groupId ->
+                    addItemToParameterList(parameterMap, groupId, parameterItem)
+                }
 
-            val parameterList = ArrayList<TargetParameterItem>()
-            targetParameter?.value?.forEach { parameterList.add(it) }
+                addItemToParameterList(
+                        parameterMap,
+                        ProcessorUtil.libraryDefaultOptionalBundleModelKey,
+                        parameterItem)
+            }
 
-            val fileBuilder = TypeSpec.classBuilder("${className}BundleModel")
-                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+            parameterMap.keys.forEach {
+                val forDefaultGroup = it == ProcessorUtil.libraryDefaultOptionalBundleModelKey
+                val bundleModelNamePostfix = if (forDefaultGroup) "" else "For${it.toLowerCase().capitalize()}"
+                val bundleModelName = "${className}BundleModel${bundleModelNamePostfix}"
+                val parameterList = parameterMap[it] ?: ArrayList()
 
-            populateBundleModel(processingEnv, parameterList, fileBuilder)
+                val fileBuilder = TypeSpec.classBuilder(bundleModelName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                populateBundleModel(processingEnv, parameterList, fileBuilder, forDefaultGroup)
 
-            val file = fileBuilder.build()
-            JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
-                    .build()
-                    .writeTo(processingEnv.filer)
+                val file = fileBuilder.build()
+                JavaFile.builder(ProcessorUtil.libraryGeneratedPackageName, file)
+                        .build()
+                        .writeTo(processingEnv.filer)
 
-            bundleModelMap[className] = ClassName.get(
-                    ProcessorUtil.libraryGeneratedPackageName,
-                    "${className}BundleModel")
+                bundleModelMap[bundleModelName] = ClassName.get(
+                        ProcessorUtil.libraryGeneratedPackageName,
+                        bundleModelName)
+            }
         }
 
         return bundleModelMap
+    }
+
+    private fun addItemToParameterList(parameterMap: HashMap<String, ArrayList<TargetParameterItem>>,
+                                       groupId: String,
+                                       parameterItem: TargetParameterItem) {
+        val currentList = parameterMap[groupId] ?: ArrayList()
+        currentList.add(parameterItem)
+        parameterMap[groupId] = currentList
     }
 
     abstract fun <T : Annotation> getElementAnnotationClass(): Class<T>

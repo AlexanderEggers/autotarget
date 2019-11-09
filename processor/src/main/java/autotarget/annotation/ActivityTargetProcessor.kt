@@ -65,11 +65,12 @@ class ActivityTargetProcessor {
             val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
 
             parameterMap.keys.forEach {
+                val forDefaultGroup = it == ProcessorUtil.libraryDefaultGroupKey
+                        || it == ProcessorUtil.libraryOptionalGroupKey
                 val parameterItems = parameterMap[it] ?: ArrayList()
 
-                val methodName = if (it == ProcessorUtil.libraryDefaultGroupKey
-                        || it == ProcessorUtil.libraryOptionalGroupKey) "show${activityName}"
-                else "show${activityName}For${it.capitalize()}"
+                val methodName = if (forDefaultGroup) "show${activityName}"
+                else "show${activityName}For${it.toLowerCase().capitalize()}"
 
                 val methodBuilder = MethodSpec.methodBuilder(methodName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -77,7 +78,7 @@ class ActivityTargetProcessor {
                         .returns(classActivityTarget)
                         .addStatement("${ProcessorUtil.listOfParameterProvider} parameterList = new $classArrayList<>()")
 
-                populateParamListBody(processingEnv, parameterItems, methodBuilder)
+                populateParamListBody(processingEnv, parameterItems, methodBuilder, forDefaultGroup)
                 methodBuilder.addStatement("return new $classActivityTarget(" +
                         "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
                 fileBuilder.addMethod(methodBuilder.build())
