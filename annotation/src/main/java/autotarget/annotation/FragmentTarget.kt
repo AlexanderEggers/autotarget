@@ -5,49 +5,27 @@ package autotarget.annotation
  * annotation, the related annotation processor is adding methods to the FragmentTargets and
  * FragmentBundles classes.
  *
+ * @property containerId View based resource [Integer] that is used to define the View container
+ * that is used to attach the Fragment to.
+ * @property tag [String] that defines the tag for this Fragment.
+ * @property enterAnimation Animation based resource [Integer] that is used to define the enter
+ * animation for this Fragment.
+ * @property exitAnimation Animation based resource [Integer] that is used to define the exit
+ * animation for this Fragment.
+ * @property popEnterAnimation Animation based resource [Integer] that is used to define the
+ * pop-enter animation for this fragment.
+ * @property popExitAnimation Animation based resource [Integer] that is used to define the
+ * pop-exit animation for this fragment.
+ *
  * @since 1.0.0
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class FragmentTarget(
-        /**
-         * Returns an view based resource [Integer] that is used to define the view container that is
-         * used to attach the fragment to.
-         */
         val containerId: Int = -1,
-
-        /**
-         * Returns a state [Integer] that is used to find this fragment out of multiple different
-         * fragments.
-         */
-        val state: Int = -1,
-
-        /**
-         * Returns a [String] that defines the tag for this fragment.
-         */
         val tag: String = "undefined",
-
-        /**
-         * Returns an animation based resource [Integer] that is used to define the enter animation
-         * for this fragment.
-         */
         val enterAnimation: Int = -1,
-
-        /**
-         * Returns an animation based resource [Integer] that is used to define the exit animation
-         * for this fragment.
-         */
         val exitAnimation: Int = -1,
-
-        /**
-         * Returns an animation based resource [Integer] that is used to define the pop-enter
-         * animation for this fragment.
-         */
         val popEnterAnimation: Int = -1,
-
-        /**
-         * Returns an animation based resource [Integer] that is used to define the pop-exit
-         * animation for this fragment.
-         */
         val popExitAnimation: Int = -1)

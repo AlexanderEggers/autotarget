@@ -11,7 +11,7 @@ import org.demo.autotarget.NextActivity.Companion.MY_KEY
 
 @ActivityTarget
 @TargetParameter([
-    TargetParameterItem(key = MY_KEY, type = String::class, name = "text", required = true),
+    TargetParameterItem(key = MY_KEY, type = String::class, name = "text", group = ["test"], required = true),
     TargetParameterItem(key = "testKey", type = Int::class, name = "intTest", group = ["test"], required = false)
 ])
 class NextActivity : AppCompatActivity() {

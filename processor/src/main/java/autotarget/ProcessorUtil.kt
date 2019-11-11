@@ -29,7 +29,8 @@ object ProcessorUtil {
     }
 
     fun populateParamListBody(processingEnv: ProcessingEnvironment,
-                              list: ArrayList<TargetParameterItem>, builder: MethodSpec.Builder): Int {
+                              list: List<TargetParameterItem>,
+                              builder: MethodSpec.Builder): Int {
 
         var paramCount = 0
 
@@ -70,7 +71,8 @@ object ProcessorUtil {
     }
 
     fun populateBundleModel(processingEnv: ProcessingEnvironment,
-                            list: ArrayList<TargetParameterItem>, builder: TypeSpec.Builder): Int {
+                            list: List<TargetParameterItem>,
+                            builder: TypeSpec.Builder): Int {
 
         var paramCount = 0
 
@@ -174,7 +176,6 @@ object ProcessorUtil {
         parameterMap[groupId] = list
     }
 
-    const val libraryServicePackageName = "autotarget.service"
     const val libraryGeneratedPackageName = "autotarget.generated"
     const val libraryDefaultGroupKey = "__&&default&&__" //ensures that the default group key stays unique
     const val libraryOptionalGroupKey = "__&&optional&&__"
@@ -190,12 +191,12 @@ object ProcessorUtil {
     val classBundle: ClassName = ClassName.get("android.os", "Bundle")
     const val classParcelable = "android.os.Parcelable"
 
-    val classBundleParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "BundleParameterProvider")
-    val classParcelableParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParcelableParameterProvider")
-    val classValueParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ValueParameterProvider")
+    val classBundleParameterProvider: ClassName = ClassName.get("autotarget.parameter", "BundleParameterProvider")
+    val classParcelableParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ParcelableParameterProvider")
+    val classValueParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ValueParameterProvider")
 
-    val classActivityTarget: ClassName = ClassName.get(libraryServicePackageName, "ActivityTarget")
-    val classFragmentTarget: ClassName = ClassName.get(libraryServicePackageName, "FragmentTarget")
-    val classParameterProvider: ClassName = ClassName.get(libraryServicePackageName, "ParameterProvider")
+    val classActivityTarget: ClassName = ClassName.get("autotarget.target", "ActivityTarget")
+    val classFragmentTarget: ClassName = ClassName.get("autotarget.target", "FragmentTarget")
+    val classParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ParameterProvider")
     val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
 }

@@ -3,7 +3,6 @@ package autotarget.annotation
 import autotarget.ProcessorUtil
 import autotarget.ProcessorUtil.classBundle
 import autotarget.ProcessorUtil.classNonNull
-import autotarget.ProcessorUtil.classNullable
 import com.squareup.javapoet.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Modifier
@@ -20,7 +19,7 @@ abstract class BundleProviderProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
 
         bundleClasses.forEach { (className, modelClassName) ->
-            fileBuilder.addMethod(MethodSpec.methodBuilder("get${className}BundleModel")
+            fileBuilder.addMethod(MethodSpec.methodBuilder("get${className}")
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addAnnotation(classNonNull)
                     .returns(modelClassName)

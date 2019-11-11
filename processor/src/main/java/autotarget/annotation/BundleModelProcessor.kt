@@ -41,13 +41,11 @@ abstract class BundleModelProcessor {
 
         annotationMap.forEach { (className, annotationElement) ->
             val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
+            val bundleModelName = "${className}BundleModel"
+            val parameterList = targetParameter?.value?.toList() ?: ArrayList()
 
-            val parameterList = ArrayList<TargetParameterItem>()
-            targetParameter?.value?.forEach { parameterList.add(it) }
-
-            val fileBuilder = TypeSpec.classBuilder("${className}BundleModel")
+            val fileBuilder = TypeSpec.classBuilder(bundleModelName)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-
             populateBundleModel(processingEnv, parameterList, fileBuilder)
 
             val file = fileBuilder.build()
@@ -55,9 +53,9 @@ abstract class BundleModelProcessor {
                     .build()
                     .writeTo(processingEnv.filer)
 
-            bundleModelMap[className] = ClassName.get(
+            bundleModelMap[bundleModelName] = ClassName.get(
                     ProcessorUtil.libraryGeneratedPackageName,
-                    "${className}BundleModel")
+                    bundleModelName)
         }
 
         return bundleModelMap

@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import autotarget.annotation.FragmentTarget
 import autotarget.generated.ActivityTargets
-import autotarget.service.TargetService
+import autotarget.target.TargetService
 
-@FragmentTarget(R.id.fragment_container)
+@FragmentTarget(containerId = R.id.fragment_container)
 class FragmentDemo : Fragment() {
 
     private val targetService = TargetService(ContextProviderSingleton.contextProvider)

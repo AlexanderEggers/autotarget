@@ -58,7 +58,6 @@ class FragmentTargetProcessor {
     private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
         fragmentsWithPackage.forEach { (fragmentName, packageName) ->
             val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
-            val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
             val containerId = annotationElement.getAnnotation(FragmentTarget::class.java).containerId
             val tag = annotationElement.getAnnotation(FragmentTarget::class.java).tag
 
@@ -71,11 +70,12 @@ class FragmentTargetProcessor {
             val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
 
             parameterMap.keys.forEach {
+                val forDefaultGroup = it == ProcessorUtil.libraryDefaultGroupKey
+                        || it == ProcessorUtil.libraryOptionalGroupKey
                 val parameterItems = parameterMap[it] ?: ArrayList()
 
-                val methodName = if (it == ProcessorUtil.libraryDefaultGroupKey
-                        || it == ProcessorUtil.libraryOptionalGroupKey) "show${fragmentName}"
-                else "show${fragmentName}For${it.capitalize()}"
+                val methodName = if (forDefaultGroup) "show${fragmentName}"
+                else "show${fragmentName}For${it.toLowerCase().capitalize()}"
 
                 val methodBuilder = MethodSpec.methodBuilder(methodName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
@@ -85,7 +85,7 @@ class FragmentTargetProcessor {
 
                 populateParamListBody(processingEnv, parameterItems, methodBuilder)
                 methodBuilder.addStatement("return new $classFragmentTarget(" +
-                        "new $fragmentClass(), $state, $containerId, \"$tag\", $enterAnimation, " +
+                        "new $fragmentClass(), $containerId, \"$tag\", $enterAnimation, " +
                         "$exitAnimation, $popEnterAnimation, $popExitAnimation, parameterList)")
                 fileBuilder.addMethod(methodBuilder.build())
             }

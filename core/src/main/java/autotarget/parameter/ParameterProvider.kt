@@ -1,4 +1,4 @@
-package autotarget.service
+package autotarget.parameter
 
 import android.os.Bundle
 
