@@ -179,7 +179,6 @@ object ProcessorUtil {
     const val libraryGeneratedPackageName = "autotarget.generated"
     const val libraryDefaultGroupKey = "__&&default&&__" //ensures that the default group key stays unique
     const val libraryOptionalGroupKey = "__&&optional&&__"
-    const val libraryDefaultOptionalBundleModelKey = "__&&default_optional&&__"
 
     val classString: ClassName = ClassName.get("java.lang", "String")
     val classRuntimeException: ClassName = ClassName.get("java.lang", "RuntimeException")
