@@ -29,9 +29,8 @@ object ProcessorUtil {
     }
 
     fun populateParamListBody(processingEnv: ProcessingEnvironment,
-                              list: ArrayList<TargetParameterItem>,
-                              builder: MethodSpec.Builder,
-                              forDefaultGroup: Boolean): Int {
+                              list: List<TargetParameterItem>,
+                              builder: MethodSpec.Builder): Int {
 
         var paramCount = 0
 
@@ -47,9 +46,9 @@ object ProcessorUtil {
             }
 
             val parameterBuilder = ParameterSpec.builder(valueType, valueName)
-            if (typeMirror !is PrimitiveType && !it.required && forDefaultGroup) {
+            if (typeMirror !is PrimitiveType && !it.required) {
                 parameterBuilder.addAnnotation(classNullable)
-            } else if (typeMirror !is PrimitiveType && (it.required || !forDefaultGroup)) {
+            } else if (typeMirror !is PrimitiveType && it.required) {
                 parameterBuilder.addAnnotation(classNonNull)
             }
 
@@ -72,9 +71,8 @@ object ProcessorUtil {
     }
 
     fun populateBundleModel(processingEnv: ProcessingEnvironment,
-                            list: ArrayList<TargetParameterItem>,
-                            builder: TypeSpec.Builder,
-                            forDefaultGroup: Boolean): Int {
+                            list: List<TargetParameterItem>,
+                            builder: TypeSpec.Builder): Int {
 
         var paramCount = 0
 
@@ -118,9 +116,9 @@ object ProcessorUtil {
                     .returns(valueType)
                     .addStatement("return $valueName")
 
-            if (typeMirror !is PrimitiveType && !it.required && forDefaultGroup) {
+            if (typeMirror !is PrimitiveType && !it.required) {
                 valueGetter.addAnnotation(classNullable)
-            } else if (typeMirror !is PrimitiveType && (it.required || !forDefaultGroup)) {
+            } else if (typeMirror !is PrimitiveType && it.required) {
                 valueGetter.addAnnotation(classNonNull)
             }
 

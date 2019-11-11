@@ -78,7 +78,7 @@ class ActivityTargetProcessor {
                         .returns(classActivityTarget)
                         .addStatement("${ProcessorUtil.listOfParameterProvider} parameterList = new $classArrayList<>()")
 
-                populateParamListBody(processingEnv, parameterItems, methodBuilder, forDefaultGroup)
+                populateParamListBody(processingEnv, parameterItems, methodBuilder)
                 methodBuilder.addStatement("return new $classActivityTarget(" +
                         "$activityClass.class, $enterAnimation, $exitAnimation, parameterList)")
                 fileBuilder.addMethod(methodBuilder.build())

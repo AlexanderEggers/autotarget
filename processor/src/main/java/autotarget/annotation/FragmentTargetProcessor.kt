@@ -83,7 +83,7 @@ class FragmentTargetProcessor {
                         .returns(classFragmentTarget)
                         .addStatement("${ProcessorUtil.listOfParameterProvider} parameterList = new $classArrayList<>()")
 
-                populateParamListBody(processingEnv, parameterItems, methodBuilder, forDefaultGroup)
+                populateParamListBody(processingEnv, parameterItems, methodBuilder)
                 methodBuilder.addStatement("return new $classFragmentTarget(" +
                         "new $fragmentClass(), $containerId, \"$tag\", $enterAnimation, " +
                         "$exitAnimation, $popEnterAnimation, $popExitAnimation, parameterList)")
