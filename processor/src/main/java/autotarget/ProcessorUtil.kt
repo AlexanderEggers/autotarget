@@ -3,12 +3,15 @@ package autotarget
 import autotarget.annotation.TargetParameter
 import autotarget.annotation.TargetParameterItem
 import com.squareup.javapoet.*
+import java.util.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeMirror
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 object ProcessorUtil {
 
@@ -111,7 +114,7 @@ object ProcessorUtil {
                 else -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
             }
 
-            val valueGetter = MethodSpec.methodBuilder("get${valueName.substring(0, 1).toUpperCase() + valueName.substring(1)}")
+            val valueGetter = MethodSpec.methodBuilder("get${valueName.substring(0, 1).toUpperCase(Locale.ROOT) + valueName.substring(1)}")
                     .addModifiers(Modifier.PUBLIC)
                     .returns(valueType)
                     .addStatement("return $valueName")
@@ -182,6 +185,7 @@ object ProcessorUtil {
 
     val classString: ClassName = ClassName.get("java.lang", "String")
     val classRuntimeException: ClassName = ClassName.get("java.lang", "RuntimeException")
+
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")
 
@@ -191,12 +195,14 @@ object ProcessorUtil {
     val classBundle: ClassName = ClassName.get("android.os", "Bundle")
     const val classParcelable = "android.os.Parcelable"
 
-    val classBundleParameterProvider: ClassName = ClassName.get("autotarget.parameter", "BundleParameterProvider")
-    val classParcelableParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ParcelableParameterProvider")
-    val classValueParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ValueParameterProvider")
-
-    val classActivityTarget: ClassName = ClassName.get("autotarget.target", "ActivityTarget")
-    val classFragmentTarget: ClassName = ClassName.get("autotarget.target", "FragmentTarget")
-    val classParameterProvider: ClassName = ClassName.get("autotarget.parameter", "ParameterProvider")
+    const val libraryParameterPackageName = "autotarget.parameter"
+    val classBundleParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "BundleParameterProvider")
+    val classParcelableParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParcelableParameterProvider")
+    val classValueParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ValueParameterProvider")
+    val classParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParameterProvider")
     val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
+
+    const val libraryTargetPackageName = "autotarget.target"
+    val classActivityTarget: ClassName = ClassName.get(libraryTargetPackageName, "ActivityTarget")
+    val classFragmentTarget: ClassName = ClassName.get(libraryTargetPackageName, "FragmentTarget")
 }

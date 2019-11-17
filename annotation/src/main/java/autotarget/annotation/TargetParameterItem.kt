@@ -13,7 +13,8 @@ import kotlin.reflect.KClass
  * @property type [KClass] that defines the type for this parameter.
  * @property group [Array] of group-ids that defines in which groups the given parameter is going
  * to be used in. The grouping feature is useful if a specific target defines a lot of different
- * input parameter. All parameter in a group are required.
+ * input parameter. Grouping is only rearranging optional parameter. Required parameter are always
+ * part of any target related method.
  *
  * Example: There are five parameter defined (P1-P5) for the target x. P1 is a required parameter,
  * the other parameter are optional. Each parameter has their own type and alters the target in a

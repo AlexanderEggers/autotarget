@@ -9,12 +9,15 @@ import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.MethodSpec
 import com.squareup.javapoet.TypeSpec
+import java.util.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class ActivityTargetProcessor {
 
@@ -70,7 +73,7 @@ class ActivityTargetProcessor {
                 val parameterItems = parameterMap[it] ?: ArrayList()
 
                 val methodName = if (forDefaultGroup) "show${activityName}"
-                else "show${activityName}For${it.toLowerCase().capitalize()}"
+                else "show${activityName}For${it.toLowerCase(Locale.ROOT).capitalize()}"
 
                 val methodBuilder = MethodSpec.methodBuilder(methodName)
                         .addModifiers(Modifier.PUBLIC, Modifier.STATIC)

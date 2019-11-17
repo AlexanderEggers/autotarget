@@ -19,7 +19,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         val context = contextProvider.activityContext
         val intent = create(target, flags)
 
-        if (context != null && context is Activity) {
+        if (context is Activity) {
             if (requestCode > 0) context.startActivityForResult(intent, requestCode)
             else context.startActivity(intent)
 
@@ -40,15 +40,13 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         }
 
         val context = contextProvider.activityContext
-        if (context != null) {
-            var check = false
+        var check = false
 
-            if (context is FragmentDispatcher) {
-                check = context.showFragment(target)
-            }
-            if (!check && context is FragmentActivity) {
-                showFragmentAsDefault(target, context)
-            }
+        if (context is FragmentDispatcher) {
+            check = context.showFragment(target)
+        }
+        if (!check && context is FragmentActivity) {
+            showFragmentAsDefault(target, context)
         }
     }
 
@@ -79,16 +77,18 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
 
         if (enterAnimation != -1 && exitAnimation != -1 && popEnterAnimation != -1 && popExitAnimation != -1) {
             ft.setCustomAnimations(enterAnimation, exitAnimation, popEnterAnimation, popExitAnimation)
-        } else if (enterAnimation != -1 && exitAnimation != -1) ft.setCustomAnimations(enterAnimation, exitAnimation)
+        } else if (enterAnimation != -1 && exitAnimation != -1) {
+            ft.setCustomAnimations(enterAnimation, exitAnimation)
+        }
 
         ft.commit()
     }
 
     @JvmOverloads
-    open fun executeIntent(intent: Intent, requestCode: Int = 0,
-                           enterAnimation: Int = -1, exitAnimation: Int = -1) {
+    open fun executeIntent(intent: Intent, requestCode: Int = 0, enterAnimation: Int = -1,
+                           exitAnimation: Int = -1) {
         val context = contextProvider.activityContext
-        if (context != null && context is Activity) {
+        if (context is Activity) {
             if (requestCode > 0) context.startActivityForResult(intent, requestCode)
             else context.startActivity(intent)
 
@@ -100,7 +100,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
 
     open fun clearFragmentBackStack() {
         val context = contextProvider.activityContext
-        if (context != null && context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
+        if (context is FragmentActivity && context.supportFragmentManager.backStackEntryCount > 0) {
             context.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
@@ -108,7 +108,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     @JvmOverloads
     open fun onBackPressed(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val context = contextProvider.activityContext
-        if (context != null && context is Activity) {
+        if (context is Activity) {
             context.onBackPressed()
 
             if (enterAnimation != -1 && exitAnimation != -1) {
@@ -120,7 +120,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     @JvmOverloads
     open fun finish(enterAnimation: Int = -1, exitAnimation: Int = -1) {
         val context = contextProvider.activityContext
-        if (context != null && context is Activity) {
+        if (context is Activity) {
             context.finish()
 
             if (enterAnimation != -1 && exitAnimation != -1) {
@@ -134,7 +134,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
                               enterAnimation: Int = -1, exitAnimation: Int = -1) {
 
         val context = contextProvider.activityContext
-        if (context != null && context is Activity) {
+        if (context is Activity) {
             context.setResult(resultCode, data)
             context.finish()
 
