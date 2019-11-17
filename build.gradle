@@ -12,10 +12,11 @@ buildscript {
         incap_version = "0.2"
 
         support_lib_appcompat_version = '1.1.0'
+        support_nav_version = "2.1.0"
 
         archknife_version = '1.0.0'
 
-        autotarget_library_version = '1.0.0-rc1'
+        autotarget_library_version = '1.0.0-beta1'
     }
 
     repositories {

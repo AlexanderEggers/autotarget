@@ -65,7 +65,7 @@ object ProcessorUtil {
                     builder.addStatement("parameterList.add(new $classParcelableParameterProvider(\"$valueKey\", $valueName))")
                 }
                 else -> {
-                    builder.addStatement("parameterList.add(new $classValueParameterProvider(\"$valueKey\", $valueName))")
+                    builder.addStatement("parameterList.add(new $classSerializableParameterProvider(\"$valueKey\", $valueName))")
                 }
             }
         }
@@ -198,7 +198,7 @@ object ProcessorUtil {
     const val libraryParameterPackageName = "autotarget.parameter"
     val classBundleParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "BundleParameterProvider")
     val classParcelableParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParcelableParameterProvider")
-    val classValueParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ValueParameterProvider")
+    val classSerializableParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "SerializableParameterProvider")
     val classParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParameterProvider")
     val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
 
