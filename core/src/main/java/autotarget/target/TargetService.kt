@@ -13,7 +13,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * This is the library main class and handles all the different target object request.
+ * This is the library main class and handles all the different target object requests.
  *
  * @param contextProvider Class that is providing the context for showing [Fragment] and [Activity]
  * targets.
@@ -31,6 +31,8 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * @param flags adds flags to the [Intent]
      * @param requestCode If >= 0, this code will be returned in onActivityResult() when the
      * [Activity] exits.
+     *
+     * @since 1.0.0
      */
     @JvmOverloads
     open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {

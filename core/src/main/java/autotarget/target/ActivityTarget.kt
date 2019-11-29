@@ -10,6 +10,8 @@ import autotarget.parameter.ParameterProvider
  * @param enterAnimation Resource [Int] that defines the enter animation of the new [Activity].
  * @param exitAnimation Resource [Int] that defines the exit animation of the new [Activity].
  * @param parameters List of [ParameterProvider] that are parsed to the new [Activity].
+ *
+ * @since 1.0.0
  */
 open class ActivityTarget(val targetClass: Class<out Activity>,
                           val enterAnimation: Int,

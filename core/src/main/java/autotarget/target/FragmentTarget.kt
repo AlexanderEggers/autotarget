@@ -17,6 +17,8 @@ import autotarget.util.FragmentDispatcher
  * [Fragment].
  * @param popExitAnimation Resource [Int] that defines the popExit animation of the new [Fragment].
  * @param parameters List of [ParameterProvider] that are parsed to the new [Fragment].
+ *
+ * @since 1.0.0
  */
 open class FragmentTarget(val fragment: Fragment,
                           val containerId: Int,
