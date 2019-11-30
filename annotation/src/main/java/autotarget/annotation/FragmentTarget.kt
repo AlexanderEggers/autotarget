@@ -9,14 +9,16 @@ package autotarget.annotation
  * that is used to attach the Fragment to.
  * @property tag [String] that defines the tag for this Fragment.
  * @property state [Integer] that can help identifying a Fragment.
- * @property enterAnimation Animation based resource [Integer] that is used to define the enter
- * animation for this Fragment.
- * @property exitAnimation Animation based resource [Integer] that is used to define the exit
- * animation for this Fragment.
- * @property popEnterAnimation Animation based resource [Integer] that is used to define the
- * pop-enter animation for this fragment.
- * @property popExitAnimation Animation based resource [Integer] that is used to define the
- * pop-exit animation for this fragment.
+ * @property enterAnim An animation or animator resource ID used for the enter animation on
+ * the view of the fragment being added or attached.
+ * @property exitAnim An animation or animator resource ID used for the exit animation on the
+ * view of the fragment being removed or detached.
+ * @property popEnterAnim An animation or animator resource ID used for the enter animation on
+ * the view of the fragment being readded or reattached caused by
+ * {@link FragmentManager#popBackStack()} or similar methods.
+ * @property popExitAnim An animation or animator resource ID used for the enter animation on
+ * the view of the fragment being removed or detached caused by
+ * {@link FragmentManager#popBackStack()} or similar methods.
  *
  * @since 1.0.0
  */
@@ -27,7 +29,7 @@ annotation class FragmentTarget(
         val containerId: Int = -1,
         val tag: String = "",
         val state: Int = -1,
-        val enterAnimation: Int = -1,
-        val exitAnimation: Int = -1,
-        val popEnterAnimation: Int = -1,
-        val popExitAnimation: Int = -1)
+        val enterAnim: Int = -1,
+        val exitAnim: Int = -1,
+        val popEnterAnim: Int = -1,
+        val popExitAnim: Int = -1)

@@ -5,10 +5,10 @@ package autotarget.annotation
  * annotation, the related annotation processor is adding methods to the ActivityTargets and
  * ActivityBundles classes.
  *
- * @param enterAnimation Animation based resource [Integer] that is used to define the enter
- * animation for this activity.
- * @param exitAnimation Animation based resource [Integer] that is used to define the exit
- * animation for this activity.
+ * @property enterAnim A resource ID of the animation resource to use for the new Activity.
+ * Use 0 for no animation.
+ * @property exitAnim A resource ID of the animation resource to use for the current Activity.
+ * Use 0 for no animation.
  *
  * @since 1.0.0
  */
@@ -16,5 +16,5 @@ package autotarget.annotation
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 annotation class ActivityTarget(
-        val enterAnimation: Int = -1,
-        val exitAnimation: Int = -1)
+        val enterAnim: Int = -1,
+        val exitAnim: Int = -1)

@@ -65,10 +65,10 @@ class FragmentTargetProcessor {
             val tag = annotationElement.getAnnotation(FragmentTarget::class.java).tag
             val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
 
-            val enterAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).enterAnimation
-            val exitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).exitAnimation
-            val popEnterAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).popEnterAnimation
-            val popExitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).popExitAnimation
+            val enterAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).enterAnim
+            val exitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).exitAnim
+            val popEnterAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).popEnterAnim
+            val popExitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).popExitAnim
 
             val fragmentClass = ClassName.get(packageName, fragmentName)
             val parameterMap = ProcessorUtil.createTargetParameterMap(annotationElement)
