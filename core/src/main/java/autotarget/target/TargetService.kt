@@ -7,10 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.NavHostFragment
-import archknife.context.ContextProvider
+import archknife.context.ContextProviderCommunicator
 import autotarget.util.FragmentDispatcher
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * This is the library main class and handles all the different target object requests.
@@ -20,8 +18,7 @@ import javax.inject.Singleton
  *
  * @since 1.0.0
  */
-@Singleton
-open class TargetService @Inject constructor(private val contextProvider: ContextProvider) {
+open class TargetService constructor(private val contextProvider: ContextProviderCommunicator) {
 
     /**
      * Method that requires an [ActivityTarget] and uses the given flags and requestCode to
@@ -55,7 +52,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     open fun createIntent(target: ActivityTarget, flags: Int = -1): Intent? {
         return contextProvider.activityContext?.let { context ->
             Intent(context, target.targetClass).apply {
-                if(flags != -1) addFlags(flags)
+                if (flags != -1) addFlags(flags)
                 putExtras(target.bundle)
             }
         }
@@ -92,7 +89,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * it implements the [FragmentDispatcher] interface.
      *
      * @param target object that includes the [Fragment] instance, parameters and animation related
-     * values
+     * values.
      *
      * @since 1.0.0
      */
@@ -120,8 +117,8 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * Method that requires an [FragmentTarget] and [FragmentActivity] to show a new [Fragment].
      *
      * @param target object that includes the [Fragment] instance, parameters and animation related
-     * values
-     * @param activity used to show the new [Fragment]
+     * values.
+     * @param activity used to show the new [Fragment].
      *
      * @since 1.0.0
      */
@@ -146,8 +143,14 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     }
 
     /**
+     * Clears the fragment back stack of the current active [Activity].
+     *
      * @param name If non-null, this is the name of a previous back state to look for; if found, all
      * states up to that state will be popped.
+     * @param hasNavHostFragment True if the [Activity] is using the Android Navigation Library and
+     * it's [NavHostFragment].
+     *
+     * @since 1.0.0
      */
     @JvmOverloads
     open fun clearFragmentBackStack(name: String? = null, hasNavHostFragment: Boolean = false) {
@@ -163,14 +166,47 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         }
     }
 
+    /**
+     * Calls the [Activity] onBackPressed method. Optionally it is possible to define a result for the
+     * current [Activity] using a result code and result data bundle. Additionally it is possible
+     * to define animation resource values to customize the enter and exit animations.
+     *
+     * @param resultCode If >= 0, this code will be parsed to the onActivityResult() of the
+     * [Activity] in back stack.
+     * @param data If resultCode is >= 0, this data [Intent] will be attached to the [Activity]
+     * result for the back stack [Activity].
+     * @param enterAnim A resource ID of the animation resource to use for the [Activity] in the
+     * back stack. Use 0 for no animation.
+     * @param exitAnim A resource ID of the animation resource to use for the current [Activity].
+     * Use 0 for no animation.
+     *
+     * @since 1.0.0
+     */
     @JvmOverloads
-    open fun onBackPressed(enterAnim: Int = -1, exitAnim: Int = -1) {
+    open fun onBackPressed(resultCode: Int = -1, data: Intent? = null, enterAnim: Int = -1, exitAnim: Int = -1) {
         contextProvider.activity?.run {
+            if (resultCode >= 0) setResult(resultCode, data)
             onBackPressed()
             if (enterAnim != -1 && exitAnim != -1) overridePendingTransition(enterAnim, exitAnim)
         }
     }
 
+    /**
+     * Calls the [Activity] finish method. Optionally it is possible to define a result for the
+     * current [Activity] using a result code and result data [Intent]. Additionally it is possible
+     * to define animation resource values to customize the enter and exit animations.
+     *
+     * @param resultCode If >= 0, this code will be parsed to the onActivityResult() of the
+     * [Activity] in back stack.
+     * @param data If resultCode is >= 0, this data [Intent] will be attached to the [Activity]
+     * result for the back stack [Activity].
+     * @param enterAnim A resource ID of the animation resource to use for the [Activity] in the
+     * back stack. Use 0 for no animation.
+     * @param exitAnim A resource ID of the animation resource to use for the current [Activity].
+     * Use 0 for no animation.
+     *
+     * @since 1.0.0
+     */
     @JvmOverloads
     open fun finish(resultCode: Int = -1, data: Intent? = null, enterAnim: Int = -1, exitAnim: Int = -1) {
         contextProvider.activity?.run {
