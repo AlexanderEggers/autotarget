@@ -8,6 +8,7 @@ package autotarget.annotation
  * @property containerId View based resource [Integer] that is used to define the View container
  * that is used to attach the Fragment to.
  * @property tag [String] that defines the tag for this Fragment.
+ * @property state [Integer] that can help identifying a Fragment.
  * @property enterAnimation Animation based resource [Integer] that is used to define the enter
  * animation for this Fragment.
  * @property exitAnimation Animation based resource [Integer] that is used to define the exit
@@ -24,7 +25,8 @@ package autotarget.annotation
 @Target(AnnotationTarget.CLASS)
 annotation class FragmentTarget(
         val containerId: Int = -1,
-        val tag: String = "undefined",
+        val tag: String = "",
+        val state: Int = -1,
         val enterAnimation: Int = -1,
         val exitAnimation: Int = -1,
         val popEnterAnimation: Int = -1,

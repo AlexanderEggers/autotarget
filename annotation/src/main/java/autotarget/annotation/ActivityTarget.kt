@@ -6,9 +6,9 @@ package autotarget.annotation
  * ActivityBundles classes.
  *
  * @param enterAnimation Animation based resource [Integer] that is used to define the enter
- * animation for this Activity.
+ * animation for this activity.
  * @param exitAnimation Animation based resource [Integer] that is used to define the exit
- * animation for this Activity.
+ * animation for this activity.
  *
  * @since 1.0.0
  */

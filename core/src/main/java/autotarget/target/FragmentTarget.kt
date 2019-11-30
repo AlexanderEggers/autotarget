@@ -10,7 +10,9 @@ import autotarget.util.FragmentDispatcher
  *
  * @param fragment Instance of the new [Fragment].
  * @param tag [String] that can be used to determine if there is already a fragment for this target
- * existing or not. To use the tag, you need to extend your [Activity] with [FragmentDispatcher].
+ * existing or not. To use the tag, you need to extend your [Activity] with [FragmentDispatcher]. By
+ * default this parameter is just an empty string.
+ * @param state Helps to identify [Fragment] to retrieve or create an instance.
  * @param enterAnimation Resource [Int] that defines the enter animation of the new [Fragment].
  * @param exitAnimation Resource [Int] that defines the exit animation of the new [Fragment].
  * @param popEnterAnimation Resource [Int] that defines the popEnter animation of the new
@@ -23,6 +25,7 @@ import autotarget.util.FragmentDispatcher
 open class FragmentTarget(val fragment: Fragment,
                           val containerId: Int,
                           val tag: String,
+                          val state: Int,
                           val enterAnimation: Int,
                           val exitAnimation: Int,
                           val popEnterAnimation: Int,

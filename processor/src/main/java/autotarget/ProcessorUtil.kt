@@ -10,6 +10,7 @@ import javax.lang.model.element.Modifier
 import javax.lang.model.type.MirroredTypeException
 import javax.lang.model.type.PrimitiveType
 import javax.lang.model.type.TypeMirror
+import javax.tools.Diagnostic
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -31,13 +32,20 @@ object ProcessorUtil {
                 processingEnv.elementUtils.getTypeElement(classParcelable).asType())
     }
 
+    private fun isSerializableObject(processingEnv: ProcessingEnvironment,
+                                     typeMirror: TypeMirror?): Boolean {
+
+        return processingEnv.typeUtils.isAssignable(typeMirror,
+                processingEnv.elementUtils.getTypeElement(classSerializable).asType())
+    }
+
     fun populateParamListBody(processingEnv: ProcessingEnvironment,
                               list: List<TargetParameterItem>,
                               builder: MethodSpec.Builder): Int {
 
         var paramCount = 0
 
-        list.forEach {
+        loop@ for (it in list) {
             var valueName = it.name
             val valueKey = it.key
             val typeMirror = getValueType(it)
@@ -48,15 +56,6 @@ object ProcessorUtil {
                 paramCount++
             }
 
-            val parameterBuilder = ParameterSpec.builder(valueType, valueName)
-            if (typeMirror !is PrimitiveType && !it.required) {
-                parameterBuilder.addAnnotation(classNullable)
-            } else if (typeMirror !is PrimitiveType && it.required) {
-                parameterBuilder.addAnnotation(classNonNull)
-            }
-
-            builder.addParameter(parameterBuilder.build())
-
             when {
                 valueType == classBundle -> {
                     builder.addStatement("parameterList.add(new $classBundleParameterProvider(\"$valueKey\", $valueName))")
@@ -64,10 +63,24 @@ object ProcessorUtil {
                 isParcelableObject(processingEnv, typeMirror) -> {
                     builder.addStatement("parameterList.add(new $classParcelableParameterProvider(\"$valueKey\", $valueName))")
                 }
-                else -> {
+                isSerializableObject(processingEnv, typeMirror) -> {
                     builder.addStatement("parameterList.add(new $classSerializableParameterProvider(\"$valueKey\", $valueName))")
                 }
+                else -> {
+                    processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "The type of " +
+                            "the parameter ${it.name} is not supported. You can use Bundle, " +
+                            "Parcelable or Serializable for target parameter.")
+                    continue@loop
+                }
             }
+
+            val parameterBuilder = ParameterSpec.builder(valueType, valueName)
+            if (typeMirror !is PrimitiveType && !it.required) {
+                parameterBuilder.addAnnotation(classNullable)
+            } else if (typeMirror !is PrimitiveType && it.required) {
+                parameterBuilder.addAnnotation(classNonNull)
+            }
+            builder.addParameter(parameterBuilder.build())
         }
 
         return paramCount
@@ -87,7 +100,7 @@ object ProcessorUtil {
                 .addStatement("if(bundle == null) throw new $classRuntimeException(\"Bundle cannot be null.\")")
                 .addCode("\n")
 
-        list.forEach {
+        loop@ for (it in list) {
             var valueName = it.name
             val typeMirror = getValueType(it)
             val valueType = ClassName.get(typeMirror)
@@ -103,6 +116,7 @@ object ProcessorUtil {
             when {
                 valueType == classBundle -> constructorBuilder.addStatement("$valueName = bundle.getBundle(\"${it.key}\")")
                 isParcelableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = bundle.getParcelable(\"${it.key}\")")
+                isSerializableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
                 valueType == ClassName.INT -> constructorBuilder.addStatement("$valueName = bundle.getInt(\"${it.key}\")")
                 valueType == ClassName.CHAR -> constructorBuilder.addStatement("$valueName = bundle.getChar(\"${it.key}\")")
                 valueType == ClassName.BYTE -> constructorBuilder.addStatement("$valueName = bundle.getByte(\"${it.key}\")")
@@ -111,7 +125,12 @@ object ProcessorUtil {
                 valueType == ClassName.DOUBLE -> constructorBuilder.addStatement("$valueName = bundle.getDouble(\"${it.key}\")")
                 valueType == ClassName.FLOAT -> constructorBuilder.addStatement("$valueName = bundle.getFloat(\"${it.key}\")")
                 valueType == classString -> constructorBuilder.addStatement("$valueName = bundle.getString(\"${it.key}\")")
-                else -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
+                else -> {
+                    processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "The type of " +
+                            "the parameter ${it.name} is not supported. You can use Bundle, " +
+                            "Parcelable or Serializable for target parameter.")
+                    continue@loop
+                }
             }
 
             val valueGetter = MethodSpec.methodBuilder("get${valueName.substring(0, 1).toUpperCase(Locale.ROOT) + valueName.substring(1)}")
@@ -156,7 +175,7 @@ object ProcessorUtil {
 
         val targetParameter = annotationElement.getAnnotation(TargetParameter::class.java)
         targetParameter?.value?.forEach {
-            if(!it.required) {
+            if (!it.required) {
                 it.group.forEach { group ->
                     addTargetParameterToGroup(parameterMap, it, group)
                 }
@@ -185,6 +204,8 @@ object ProcessorUtil {
 
     val classString: ClassName = ClassName.get("java.lang", "String")
     val classRuntimeException: ClassName = ClassName.get("java.lang", "RuntimeException")
+
+    const val classSerializable = "java.io.Serializable"
 
     val classList: ClassName = ClassName.get("java.util", "List")
     val classArrayList: ClassName = ClassName.get("java.util", "ArrayList")

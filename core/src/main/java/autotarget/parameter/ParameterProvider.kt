@@ -13,6 +13,8 @@ interface ParameterProvider {
      * Adds values to the given [Bundle] object.
      *
      * @param bundle [Bundle] object that will receive the new values
+     *
+     * @since 1.0.0
      */
     fun addToBundle(bundle: Bundle)
 }

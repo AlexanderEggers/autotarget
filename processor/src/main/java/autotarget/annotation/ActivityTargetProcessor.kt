@@ -59,8 +59,8 @@ class ActivityTargetProcessor {
     }
 
     private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
-        activitiesWithPackage.forEach { (activityName, packageName) ->
-            val annotationElement: Element = activityAnnotationMap[activityName]!!
+        for ((activityName, packageName) in activitiesWithPackage) {
+            val annotationElement: Element = activityAnnotationMap[activityName] ?: continue
             val enterAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).enterAnimation
             val exitAnimation = annotationElement.getAnnotation(ActivityTarget::class.java).exitAnimation
 

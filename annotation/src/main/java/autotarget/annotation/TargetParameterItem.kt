@@ -6,11 +6,11 @@ import kotlin.reflect.KClass
  * This annotation is part of the [TargetParameter] annotation value-list. This annotation is used
  * to define single parameter for the relevant target (activity/fragment).
  *
- * @property key [String] that acts as a key for the bundle which is parsed to the target.
+ * @property key [String] that acts as a key for the bundle value which is parsed to the target.
  * @property name [String] that used to improve the generated code. The name is re-used for all
- * different generated classes and methods. That will help identifying parameters (if many are
+ * the different generated classes and methods. That will help identifying parameters (if many are
  * given for a specific target).
- * @property type [KClass] that defines the type for this parameter.
+ * @property type [KClass] that defines the type for this bundle value.
  * @property group [Array] of group-ids that defines in which groups the given parameter is going
  * to be used in. The grouping feature is useful if a specific target defines a lot of different
  * input parameter. Grouping is only rearranging optional parameter. Required parameter are always
@@ -25,8 +25,8 @@ import kotlin.reflect.KClass
  * - ...
  *
  * @property required value that defines if the given parameter is required or not. A required
- * parameter is always part of any target related method. It indicates that parameter p is always
- * required by the target.
+ * parameter is always part of any target related method/group. It indicates that parameter p is
+ * always required by the target.
  *
  * @since 1.0.0
  */

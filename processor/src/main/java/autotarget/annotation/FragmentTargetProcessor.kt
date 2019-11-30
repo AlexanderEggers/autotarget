@@ -59,10 +59,11 @@ class FragmentTargetProcessor {
     }
 
     private fun createMethods(processingEnv: ProcessingEnvironment, fileBuilder: TypeSpec.Builder) {
-        fragmentsWithPackage.forEach { (fragmentName, packageName) ->
-            val annotationElement: Element = fragmentAnnotationMap[fragmentName]!!
+        for ((fragmentName, packageName) in fragmentsWithPackage) {
+            val annotationElement: Element = fragmentAnnotationMap[fragmentName] ?: continue
             val containerId = annotationElement.getAnnotation(FragmentTarget::class.java).containerId
             val tag = annotationElement.getAnnotation(FragmentTarget::class.java).tag
+            val state = annotationElement.getAnnotation(FragmentTarget::class.java).state
 
             val enterAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).enterAnimation
             val exitAnimation = annotationElement.getAnnotation(FragmentTarget::class.java).exitAnimation
@@ -88,7 +89,7 @@ class FragmentTargetProcessor {
 
                 populateParamListBody(processingEnv, parameterItems, methodBuilder)
                 methodBuilder.addStatement("return new $classFragmentTarget(" +
-                        "new $fragmentClass(), $containerId, \"$tag\", $enterAnimation, " +
+                        "new $fragmentClass(), $containerId, \"$tag\", $state, $enterAnimation, " +
                         "$exitAnimation, $popEnterAnimation, $popExitAnimation, parameterList)")
                 fileBuilder.addMethod(methodBuilder.build())
             }
