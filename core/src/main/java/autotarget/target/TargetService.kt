@@ -35,7 +35,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * @since 1.0.0
      */
     @JvmOverloads
-    open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
+    open fun execute(target: ActivityTarget, flags: Int = -1, requestCode: Int = -1) {
         createIntent(target, flags)?.let { intent ->
             executeIntent(intent, requestCode, target.enterAnim, target.exitAnim)
         }
@@ -52,10 +52,10 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * @since 1.0.0
      */
     @JvmOverloads
-    open fun createIntent(target: ActivityTarget, flags: Int = 0): Intent? {
+    open fun createIntent(target: ActivityTarget, flags: Int = -1): Intent? {
         return contextProvider.activityContext?.let { context ->
             Intent(context, target.targetClass).apply {
-                addFlags(flags)
+                if(flags != -1) addFlags(flags)
                 putExtras(target.bundle)
             }
         }
@@ -76,10 +76,10 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      * @since 1.0.0
      */
     @JvmOverloads
-    open fun executeIntent(intent: Intent, requestCode: Int = 0, enterAnim: Int = -1,
+    open fun executeIntent(intent: Intent, requestCode: Int = -1, enterAnim: Int = -1,
                            exitAnim: Int = -1) {
         contextProvider.activity?.run {
-            if (requestCode > 0) startActivityForResult(intent, requestCode)
+            if (requestCode >= 0) startActivityForResult(intent, requestCode)
             else startActivity(intent)
 
             if (enterAnim != -1 && exitAnim != -1) overridePendingTransition(enterAnim, exitAnim)
@@ -172,9 +172,9 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     }
 
     @JvmOverloads
-    open fun finish(resultCode: Int = 0, data: Intent? = null, enterAnim: Int = -1, exitAnim: Int = -1) {
+    open fun finish(resultCode: Int = -1, data: Intent? = null, enterAnim: Int = -1, exitAnim: Int = -1) {
         contextProvider.activity?.run {
-            if (resultCode > 0) setResult(resultCode, data)
+            if (resultCode >= 0) setResult(resultCode, data)
             finish()
             if (enterAnim != -1 && exitAnim != -1) overridePendingTransition(enterAnim, exitAnim)
         }
