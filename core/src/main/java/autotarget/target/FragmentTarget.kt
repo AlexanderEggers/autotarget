@@ -30,4 +30,9 @@ open class FragmentTarget(val fragment: Fragment,
                           val exitAnimation: Int,
                           val popEnterAnimation: Int,
                           val popExitAnimation: Int,
-                          parameters: List<ParameterProvider>) : BaseTarget(parameters)
+                          parameters: List<ParameterProvider>) : BaseTarget(parameters) {
+
+    init {
+        fragment.arguments = super.bundle
+    }
+}

@@ -36,23 +36,12 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
      */
     @JvmOverloads
     open fun execute(target: ActivityTarget, flags: Int = 0, requestCode: Int = 0) {
-        val context = contextProvider.activityContext
-        val intent = create(target, flags)
-
-        if (context is Activity) {
-            if (requestCode > 0) context.startActivityForResult(intent, requestCode)
-            else context.startActivity(intent)
-
-            val enterAnimation = target.enterAnimation
-            val exitAnimation = target.exitAnimation
-            if (enterAnimation != -1 && exitAnimation != -1) {
-                context.overridePendingTransition(target.enterAnimation, target.exitAnimation)
-            }
-        }
+        val intent = createIntent(target, flags)
+        executeIntent(intent, requestCode, target.enterAnimation, target.exitAnimation)
     }
 
     @JvmOverloads
-    open fun create(target: ActivityTarget, flags: Int = 0): Intent {
+    open fun createIntent(target: ActivityTarget, flags: Int = 0): Intent {
         val context = contextProvider.activityContext
         return Intent(context, target.targetClass).apply {
             addFlags(flags)
@@ -83,7 +72,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
 
         if (target.containerId == -1) {
             Log.e(TargetService::class.java.name, "Container ID cannot be -1. Check your " +
-                    "annotation or set a custom container id using the execute method.")
+                    "FragmentTarget annotation")
             return
         }
 
@@ -98,13 +87,8 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         }
     }
 
-    open fun create(target: FragmentTarget): Fragment {
-        return target.fragment.apply { arguments = target.bundle }
-    }
-
     private fun showFragmentAsDefault(target: FragmentTarget, context: FragmentActivity) {
         val fragment = target.fragment
-        fragment.arguments = target.bundle
 
         val ft = context.supportFragmentManager.beginTransaction()
         ft.replace(target.containerId, fragment, target.tag)
@@ -123,8 +107,12 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
         ft.commit()
     }
 
+    /**
+     * @param name If non-null, this is the name of a previous back state to look for; if found, all
+     * states up to that state will be popped.
+     */
     @JvmOverloads
-    open fun clearFragmentBackStack(hasNavHostFragment: Boolean = false) {
+    open fun clearFragmentBackStack(name: String? = null, hasNavHostFragment: Boolean = false) {
         val context = contextProvider.activityContext
         if (context is FragmentActivity) {
             val fragmentManager = if (hasNavHostFragment) {
@@ -132,7 +120,7 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
                 navHostFragment?.childFragmentManager
             } else context.supportFragmentManager
 
-            fragmentManager?.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            fragmentManager?.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
     }
 
@@ -163,7 +151,6 @@ open class TargetService @Inject constructor(private val contextProvider: Contex
     @JvmOverloads
     open fun finishWithResult(resultCode: Int, data: Intent? = null,
                               enterAnimation: Int = -1, exitAnimation: Int = -1) {
-
         val context = contextProvider.activityContext
         if (context is Activity) {
             context.setResult(resultCode, data)

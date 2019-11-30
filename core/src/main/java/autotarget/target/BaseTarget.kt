@@ -12,8 +12,7 @@ import autotarget.parameter.ParameterProvider
  */
 abstract class BaseTarget(parameters: List<ParameterProvider>) {
 
-    var bundle: Bundle = Bundle()
-        private set
+    val bundle: Bundle = Bundle()
 
     init {
         for (parameter in parameters) parameter.addToBundle(bundle)
