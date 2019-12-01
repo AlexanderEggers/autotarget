@@ -170,8 +170,10 @@ class DemoFragment : Fragment() {
 
         val bundleModel = FragmentBundles.getFragmentDemoBundleModel(arguments!!)
         
-        val textView = findViewById<TextView>(R.id.textView)
+        val textView = view.findViewById<TextView>(R.id.textView)
         textView.text = bundleModel.myDemoValue
+        
+        ...
     }
 }
 
