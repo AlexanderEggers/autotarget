@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
         ...
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.execute(FragmentsTarget.showDemoFragment())
+            targetService.execute(FragmentsTarget.showDemoFragment("Sample Text"))
         }
     }
 }
@@ -162,18 +162,17 @@ Using bundle models for fragments is quite similar.
 ```kotlin
 
 @FragmentTarget(R.id.fragment_container)
-@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", group=["deeplinking"], required=true)
+@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", required=true)
 class DemoFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        ...
+        val view: View = inflater.inflate(R.layout.fragment_demo, container, false)
 
         val bundleModel = FragmentBundles.getFragmentDemoBundleModel(arguments!!)
-        
         val textView = view.findViewById<TextView>(R.id.textView)
         textView.text = bundleModel.myDemoValue
         
-        ...
+        return view
     }
 }
 
