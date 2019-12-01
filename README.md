@@ -52,7 +52,7 @@ Fragments have a similar usage except you can to define certain config values wi
 ```kotlin
 
 @FragmentTarget(R.id.fragment_container)
-@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", required=false)])
+@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", required=true)])
 class DemoFragment : Fragment() {
      ...
 }
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         ...
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            targetService.execute(ActivityTargets.showNextActivity("Test successful!"))
+            targetService.execute(ActivityTargets.showDemoActivity("Test successful!"))
         }
     }
 }
@@ -132,7 +132,48 @@ class MainActivity : AppCompatActivity() {
 }
 
 ```
-TODO: Documentation about ActivityBundles/FragmentBundles.
+When you are trying to retrieve the bundle parameter in your new activity or fragment normally you would need to use the intent.extras or fragment.arguments. This library is offering type-safe bundle models that convert the bundle object in your new activity/fragment into something you can use directly in your code without worring about keys, right types or nullability issues.
+
+To access the bundle models you have use the generated classes ActivityBundles or FragmentBundles. Each class has methods that take the activity or fragment bundle object. The return type is a new model class that filters out all the relevant bundle parameter and assigns it to typed parameter in that model.
+
+For an activity you can use the implementation like that.
+
+```kotlin
+
+@ActivityTarget
+@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", required=true)])
+class DemoActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val bundleModel = ActivityBundles.getNextActivityBundleModel(intent.extras!!)
+        
+        val textView = findViewById<TextView>(R.id.textView)
+        textView.text = bundleModel.myDemoValue
+    }
+}
+
+```
+Using bundle models for fragments is quite similar.
+
+```kotlin
+
+@FragmentTarget(R.id.fragment_container)
+@TargetParameter([TargetParameterItem(key="MY_KEY", type=String::class, name="myDemoValue", group=["deeplinking"], required=true)
+class DemoFragment : Fragment() {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        ...
+
+        val bundleModel = FragmentBundles.getFragmentDemoBundleModel(arguments!!)
+        
+        val textView = findViewById<TextView>(R.id.textView)
+        textView.text = bundleModel.myDemoValue
+    }
+}
+
+```
 
 Status
 ------
