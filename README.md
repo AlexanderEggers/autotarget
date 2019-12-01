@@ -132,6 +132,8 @@ class MainActivity : AppCompatActivity() {
 }
 
 ```
+3. Retrieve the parameter values in your new target
+
 When you are trying to retrieve the bundle parameter in your new activity or fragment normally you would need to use the intent.extras or fragment.arguments. This library is offering type-safe bundle models that convert the bundle object in your new activity/fragment into something you can use directly in your code without worring about keys, right types or nullability issues.
 
 To access the bundle models you have use the generated classes ActivityBundles or FragmentBundles. Each class has methods that take the activity or fragment bundle object. The return type is a new model class that filters out all the relevant bundle parameter and assigns it to typed parameter in that model.
