@@ -26,5 +26,5 @@ interface FragmentDispatcher {
      *
      * @since 1.0.0
      */
-    fun showFragment(target: FragmentTarget?): Boolean
+    fun showFragment(target: FragmentTarget): Boolean
 }
