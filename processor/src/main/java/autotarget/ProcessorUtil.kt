@@ -115,8 +115,6 @@ object ProcessorUtil {
 
             when {
                 valueType == classBundle -> constructorBuilder.addStatement("$valueName = bundle.getBundle(\"${it.key}\")")
-                isParcelableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = bundle.getParcelable(\"${it.key}\")")
-                isSerializableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
                 valueType == ClassName.INT -> constructorBuilder.addStatement("$valueName = bundle.getInt(\"${it.key}\")")
                 valueType == ClassName.CHAR -> constructorBuilder.addStatement("$valueName = bundle.getChar(\"${it.key}\")")
                 valueType == ClassName.BYTE -> constructorBuilder.addStatement("$valueName = bundle.getByte(\"${it.key}\")")
@@ -125,6 +123,8 @@ object ProcessorUtil {
                 valueType == ClassName.DOUBLE -> constructorBuilder.addStatement("$valueName = bundle.getDouble(\"${it.key}\")")
                 valueType == ClassName.FLOAT -> constructorBuilder.addStatement("$valueName = bundle.getFloat(\"${it.key}\")")
                 valueType == classString -> constructorBuilder.addStatement("$valueName = bundle.getString(\"${it.key}\")")
+                isParcelableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = bundle.getParcelable(\"${it.key}\")")
+                isSerializableObject(processingEnv, typeMirror) -> constructorBuilder.addStatement("$valueName = ($valueType) bundle.getSerializable(\"${it.key}\")")
                 else -> {
                     processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "The type of " +
                             "the parameter ${it.name} is not supported. You can use Bundle, " +
