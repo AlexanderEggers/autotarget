@@ -14,7 +14,7 @@ buildscript {
 
         archknife_version = '1.0.0'
 
-        autotarget_library_version = '1.0.0-rc2'
+        autotarget_library_version = '1.0.0-rc3'
     }
 
     repositories {
