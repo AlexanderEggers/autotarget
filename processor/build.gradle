@@ -9,7 +9,7 @@ ext {
     publishedGroupId = 'org.autotarget'
     libraryName = 'AutoTarget Processor Artifact'
     artifact = 'autotarget-processor'
-    libraryYear = '2019'
+    libraryYear = '2020'
 
     libraryDescription = 'The AutoTarget Processor Artifact is generating the required classes ' +
             'for the AutoTarget library.'

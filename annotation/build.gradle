@@ -8,7 +8,7 @@ ext {
     publishedGroupId = 'org.autotarget'
     libraryName = 'AutoTarget Annotation Artifact'
     artifact = 'autotarget-annotation'
-    libraryYear = '2019'
+    libraryYear = '2020'
 
     libraryDescription = 'The AutoTarget Annotation Artifact is providing annotation classes ' +
             'for using the AutoTarget library.'
