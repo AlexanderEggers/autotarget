@@ -216,14 +216,14 @@ object ProcessorUtil {
     val classBundle: ClassName = ClassName.get("android.os", "Bundle")
     const val classParcelable = "android.os.Parcelable"
 
-    const val libraryParameterPackageName = "autotarget.parameter"
+    private const val libraryParameterPackageName = "autotarget.parameter"
     val classBundleParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "BundleParameterProvider")
     val classParcelableParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParcelableParameterProvider")
     val classSerializableParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "SerializableParameterProvider")
     val classParameterProvider: ClassName = ClassName.get(libraryParameterPackageName, "ParameterProvider")
     val listOfParameterProvider = ParameterizedTypeName.get(classList, classParameterProvider)
 
-    const val libraryTargetPackageName = "autotarget.target"
+    private const val libraryTargetPackageName = "autotarget.target"
     val classActivityTarget: ClassName = ClassName.get(libraryTargetPackageName, "ActivityTarget")
     val classFragmentTarget: ClassName = ClassName.get(libraryTargetPackageName, "FragmentTarget")
 }

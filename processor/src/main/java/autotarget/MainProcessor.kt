@@ -17,16 +17,17 @@ class MainProcessor : AbstractProcessor() {
 
     override fun process(set: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         try {
-            //Annotation processor part - like for the annotation @ActivityTarget
-            val targetParameterMap = TargetParameterProcessor().process(processingEnv, roundEnv)
+            if (set.isNotEmpty()) {
+                val targetParameterMap = TargetParameterProcessor().process(processingEnv, roundEnv)
 
-            ActivityTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
-            val activityBundleClasses = ActivityBundleModelProcessor().process(processingEnv, roundEnv)
-            ActivityBundleProviderProcessor().process(processingEnv, activityBundleClasses)
+                ActivityTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
+                val activityBundleClasses = ActivityBundleModelProcessor().process(processingEnv, roundEnv)
+                ActivityBundleProviderProcessor().process(processingEnv, activityBundleClasses)
 
-            FragmentTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
-            val fragmentBundleClasses = FragmentBundleModelProcessor().process(processingEnv, roundEnv)
-            FragmentBundleProviderProcessor().process(processingEnv, fragmentBundleClasses)
+                FragmentTargetProcessor().process(processingEnv, roundEnv, targetParameterMap)
+                val fragmentBundleClasses = FragmentBundleModelProcessor().process(processingEnv, roundEnv)
+                FragmentBundleProviderProcessor().process(processingEnv, fragmentBundleClasses)
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         }
