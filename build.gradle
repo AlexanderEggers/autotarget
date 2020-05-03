@@ -12,7 +12,7 @@ buildscript {
         support_lib_appcompat_version = '1.1.0'
         support_nav_version = "2.2.2"
 
-        archknife_version = '1.1.0-rc01'
+        archknife_version = '1.1.0-rc02'
 
         autotarget_library_version = '1.0.0-rc5'
     }
