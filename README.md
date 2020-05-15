@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-   def autotarget_version = "1.0.0-rc2"
+   def autotarget_version = "1.0.0"
 
   //Bundles all artifacts for the library including some additional helper classes
   implementation "org.autotarget:autotarget-core:$autotarget_version"
@@ -27,7 +27,7 @@ dependencies {
 }
 ```
 
-How do I use AutoTarget? (Step-by-step introduction for 1.0.0-rc2)
+How do I use AutoTarget? (Step-by-step introduction for 1.0.0)
 -------------------
 
 1. Add the annotations
@@ -180,7 +180,7 @@ class DemoFragment : Fragment() {
 
 Status
 ------
-Version 1.0.0 is currently under development in the master branch.
+Version 1.1.0 is currently under development in the develop branch. The latest stable version is 1.0.0 which can be found in the stable/1.0.x branch.
 
 Comments/bugs/questions/pull requests are always welcome!
 
